@@ -3,9 +3,9 @@ import React from 'react';
 
 const Header: React.FC = () => {
   return (
-    <header className="bg-white py-4 px-6 md:px-10 shadow-md">
+    <header className="bg-gray-50 py-4 px-6 md:px-10 shadow-md border-b-2 border-cps-blue-dark">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-        <div className="w-full md:w-auto flex justify-center md:justify-start">
+        <div className="w-full md:w-auto flex justify-center md:justify-start bg-white rounded-lg p-2 shadow-sm">
           <img 
             src="/lovable-uploads/46413f67-28f7-49ff-a512-9b2eed73faf3.png" 
             alt="Logo CPS" 
@@ -13,7 +13,7 @@ const Header: React.FC = () => {
           />
         </div>
         
-        <div className="w-full md:w-auto flex justify-center md:justify-end">
+        <div className="w-full md:w-auto flex justify-center md:justify-end bg-white rounded-lg p-2 shadow-sm">
           <img 
             src="/lovable-uploads/5cdd003b-ef72-4830-bbf9-79265fd94472.png" 
             alt="Logo CPS Horizontal" 
