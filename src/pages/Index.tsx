@@ -28,7 +28,7 @@ const Index = () => {
                 <img 
                   src="/lovable-uploads/5cdd003b-ef72-4830-bbf9-79265fd94472.png" 
                   alt="Logo CPS Horizontal" 
-                  className="h-16 md:h-20 bg-white p-2 rounded-lg"
+                  className="h-16 md:h-20"
                 />
               </div>
             </div>
