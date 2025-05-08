@@ -15,21 +15,13 @@ const Index = () => {
         <section className="bg-cps-wine text-white py-12 px-6">
           <div className="container mx-auto">
             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-              <div className="text-center md:text-left">
+              <div className="text-center md:text-left bg-white text-cps-wine p-4 rounded-lg">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
                   Cadastro para o Evento CPS
                 </h1>
                 <p className="text-xl md:text-2xl max-w-3xl">
                   Participe do nosso evento exclusivo e receba seu QR Code de acesso.
                 </p>
-              </div>
-              
-              <div className="flex justify-center">
-                <img 
-                  src="/lovable-uploads/5cdd003b-ef72-4830-bbf9-79265fd94472.png" 
-                  alt="Logo CPS Horizontal" 
-                  className="h-16 md:h-20"
-                />
               </div>
             </div>
           </div>

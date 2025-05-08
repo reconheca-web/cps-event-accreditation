@@ -5,7 +5,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-cps-blue-dark text-white py-8 px-6">
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <h3 className="text-xl font-bold mb-4">Centro Paula Souza</h3>
             <p className="mb-2">Rua dos Andradas, 140 • Santa Ifigênia</p>
@@ -26,6 +26,14 @@ const Footer: React.FC = () => {
                 YouTube
               </a>
             </div>
+          </div>
+          
+          <div className="flex justify-center items-center">
+            <img 
+              src="/lovable-uploads/5cdd003b-ef72-4830-bbf9-79265fd94472.png" 
+              alt="Logo CPS Horizontal" 
+              className="h-12 md:h-16"
+            />
           </div>
         </div>
         
