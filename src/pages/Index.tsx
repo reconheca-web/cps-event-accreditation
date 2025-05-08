@@ -29,9 +29,6 @@ const Index = () => {
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
                   Cadastro para o Evento CPS
                 </h1>
-                <p className="text-xl md:text-2xl max-w-3xl">
-                  Participe do nosso evento exclusivo e receba seu QR Code de acesso.
-                </p>
               </div>
             </div>
           </div>
