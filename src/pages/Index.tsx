@@ -9,7 +9,7 @@ const Index = () => {
       
       <main className="flex-grow">
         {/* Hero Section - Swapped logo and title positions */}
-        <section className="bg-cps-wine text-white md:py-8 py-[16px] px-[23px]">
+        <section className="bg-cps-wine text-white md:py-8 py-[16px] px-[25px]">
           <div className="container mx-auto">
             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
               {/* Title now on the left */}
