@@ -1,39 +1,41 @@
+
 import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RegisterForm from "@/components/RegisterForm";
 import EventDetails from "@/components/EventDetails";
+
 const Index = () => {
   return <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
       
       <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="bg-cps-wine text-white py-8 px-6">
+        {/* Hero Section - Swapped logo and title positions */}
+        <section className="bg-cps-wine text-white py-6 md:py-8 px-6">
           <div className="container mx-auto">
             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-              {/* Logo principal com fundo branco */}
-              <div className="bg-white p-3 rounded-lg shadow-sm mb-4 md:mb-0">
-                <img src="/lovable-uploads/46413f67-28f7-49ff-a512-9b2eed73faf3.png" alt="Logo CPS" className="h-16 md:h-20" />
-              </div>
-              
-              {/* Texto sem fundo branco */}
-              <div className="text-center md:text-left">
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+              {/* Title now on the left */}
+              <div className="text-center md:text-left order-2 md:order-1">
+                <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold">
                   Cadastro para o Evento CPS
                 </h1>
+              </div>
+              
+              {/* Logo now on the right */}
+              <div className="bg-white p-3 rounded-lg shadow-sm mb-4 md:mb-0 order-1 md:order-2">
+                <img src="/lovable-uploads/46413f67-28f7-49ff-a512-9b2eed73faf3.png" alt="Logo CPS" className="h-14 md:h-20" />
               </div>
             </div>
           </div>
         </section>
         
         {/* Registration Form and Event Details Section */}
-        <section className="py-12 px-6">
+        <section className="py-8 md:py-12 px-6">
           <div className="container mx-auto px-[8px]">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Registration Form Column */}
               <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-cps-blue-dark mb-8 text-center lg:text-left">
+                <h2 className="text-2xl md:text-3xl font-bold text-cps-blue-dark mb-6 md:mb-8 text-center lg:text-left">
                   Formulário de Inscrição
                 </h2>
                 <RegisterForm />
