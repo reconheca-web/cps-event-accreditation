@@ -95,9 +95,9 @@ const RegisterForm: React.FC = () => {
   
   return (
     <>
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-white rounded-lg shadow-md p-6 w-full">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 w-full">
             <FormField
               control={form.control}
               name="nome"
@@ -108,7 +108,7 @@ const RegisterForm: React.FC = () => {
                     <Input 
                       placeholder="Digite seu nome completo" 
                       {...field} 
-                      className={errors.nome ? "border-red-500" : ""}
+                      className={errors.nome ? "border-red-500 w-full" : "w-full"}
                     />
                   </FormControl>
                   {errors.nome && <FormMessage>{errors.nome}</FormMessage>}
@@ -127,7 +127,7 @@ const RegisterForm: React.FC = () => {
                       type="email" 
                       placeholder="seu.email@exemplo.com" 
                       {...field} 
-                      className={errors.email ? "border-red-500" : ""}
+                      className={errors.email ? "border-red-500 w-full" : "w-full"}
                     />
                   </FormControl>
                   {errors.email && <FormMessage>{errors.email}</FormMessage>}
@@ -146,7 +146,7 @@ const RegisterForm: React.FC = () => {
                       placeholder="(XX) XXXXX-XXXX" 
                       {...field}
                       onChange={(e) => handlePhoneChange(e)} 
-                      className={errors.telefone ? "border-red-500" : ""}
+                      className={errors.telefone ? "border-red-500 w-full" : "w-full"}
                     />
                   </FormControl>
                   {errors.telefone && <FormMessage>{errors.telefone}</FormMessage>}
@@ -166,7 +166,7 @@ const RegisterForm: React.FC = () => {
                   >
                     <FormControl>
                       <SelectTrigger 
-                        className={errors.tipoUnidade ? "border-red-500" : ""}
+                        className={errors.tipoUnidade ? "border-red-500 w-full" : "w-full"}
                       >
                         <SelectValue placeholder="Selecione o tipo de unidade" />
                       </SelectTrigger>
@@ -193,7 +193,7 @@ const RegisterForm: React.FC = () => {
                       <Input 
                         placeholder="Digite o nome da coordenadoria" 
                         {...field} 
-                        className={errors.nomeUnidade ? "border-red-500" : ""}
+                        className={errors.nomeUnidade ? "border-red-500 w-full" : "w-full"}
                       />
                     </FormControl>
                   ) : (
@@ -204,7 +204,7 @@ const RegisterForm: React.FC = () => {
                     >
                       <FormControl>
                         <SelectTrigger 
-                          className={errors.nomeUnidade ? "border-red-500" : ""}
+                          className={errors.nomeUnidade ? "border-red-500 w-full" : "w-full"}
                         >
                           <SelectValue placeholder="Selecione a unidade" />
                         </SelectTrigger>

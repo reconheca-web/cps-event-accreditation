@@ -12,7 +12,7 @@ const Index = () => {
       
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="bg-cps-wine text-white py-8 px-6">
+        <section className="bg-cps-wine text-white py-8 px-3 sm:px-6">
           <div className="container mx-auto">
             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
               {/* Logo principal com fundo branco */}
@@ -35,11 +35,11 @@ const Index = () => {
         </section>
         
         {/* Registration Form and Event Details Section */}
-        <section className="py-12 px-6">
+        <section className="py-12 px-3 sm:px-6">
           <div className="container mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Registration Form Column */}
-              <div>
+              <div className="w-full">
                 <h2 className="text-2xl md:text-3xl font-bold text-cps-blue-dark mb-8 text-center lg:text-left">
                   Formulário de Inscrição
                 </h2>
@@ -47,8 +47,8 @@ const Index = () => {
               </div>
               
               {/* Event Image Column */}
-              <div className="flex flex-col justify-center">
-                <div className="rounded-lg overflow-hidden shadow-md h-64 md:h-96 bg-cps-blue-dark flex items-center justify-center">
+              <div className="flex flex-col justify-center w-full">
+                <div className="rounded-lg overflow-hidden shadow-md h-64 md:h-96 bg-cps-blue-dark flex items-center justify-center w-full">
                   <div className="text-center text-white p-6">
                     <h3 className="text-2xl md:text-3xl font-bold mb-4">Evento CPS 2025</h3>
                     <p className="text-lg md:text-xl">
