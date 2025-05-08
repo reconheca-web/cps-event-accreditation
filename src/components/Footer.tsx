@@ -1,10 +1,7 @@
-
 import React from 'react';
-
 const Footer: React.FC = () => {
-  return (
-    <footer className="bg-cps-blue-dark text-white py-8 px-6">
-      <div className="container mx-auto">
+  return <footer className="bg-cps-blue-dark text-white py-8 px-6">
+      <div className="container mx-auto px-[8px]">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <h3 className="text-xl font-bold mb-4">Centro Paula Souza</h3>
@@ -29,11 +26,7 @@ const Footer: React.FC = () => {
           </div>
           
           <div className="flex justify-center items-center">
-            <img 
-              src="/lovable-uploads/5cdd003b-ef72-4830-bbf9-79265fd94472.png" 
-              alt="Logo CPS Horizontal" 
-              className="h-12 md:h-16"
-            />
+            <img src="/lovable-uploads/5cdd003b-ef72-4830-bbf9-79265fd94472.png" alt="Logo CPS Horizontal" className="h-12 md:h-16" />
           </div>
         </div>
         
@@ -41,8 +34,6 @@ const Footer: React.FC = () => {
           <p>© {new Date().getFullYear()} Centro Paula Souza. Todos os direitos reservados.</p>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
