@@ -13,13 +13,25 @@ const Index = () => {
       <main className="flex-grow">
         {/* Hero Section */}
         <section className="bg-cps-wine text-white py-12 px-6">
-          <div className="container mx-auto text-center">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-              Cadastro para o Evento CPS
-            </h1>
-            <p className="text-xl md:text-2xl max-w-3xl mx-auto">
-              Participe do nosso evento exclusivo e receba seu QR Code de acesso.
-            </p>
+          <div className="container mx-auto">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="text-center md:text-left">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+                  Cadastro para o Evento CPS
+                </h1>
+                <p className="text-xl md:text-2xl max-w-3xl">
+                  Participe do nosso evento exclusivo e receba seu QR Code de acesso.
+                </p>
+              </div>
+              
+              <div className="flex justify-center">
+                <img 
+                  src="/lovable-uploads/46413f67-28f7-49ff-a512-9b2eed73faf3.png" 
+                  alt="Logo CPS" 
+                  className="h-24 md:h-32"
+                />
+              </div>
+            </div>
           </div>
         </section>
         
