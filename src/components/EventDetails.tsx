@@ -1,18 +1,15 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, MapPin, Car } from "lucide-react";
-
 const EventDetails: React.FC = () => {
-  return (
-    <div className="bg-gray-50 py-10 px-3 sm:px-6">
-      <div className="container mx-auto">
+  return <div className="bg-gray-50 py-10 px-6">
+      <div className="container mx-auto px-[8px]">
         <h2 className="text-2xl md:text-3xl font-bold text-cps-blue-dark mb-8 text-center">
           Informações do Evento
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-white p-6 rounded-lg shadow-md w-full">
+          <div className="bg-white p-6 rounded-lg shadow-md">
             <div className="flex flex-col space-y-4">
               <div className="flex items-start">
                 <MapPin className="h-6 w-6 text-cps-wine mr-3 mt-1 flex-shrink-0" />
@@ -50,7 +47,7 @@ const EventDetails: React.FC = () => {
             </div>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow-md flex flex-col justify-between w-full">
+          <div className="bg-white p-6 rounded-lg shadow-md flex flex-col justify-between">
             <div className="mb-6">
               <h3 className="text-xl font-semibold text-cps-blue-dark mb-4">Como chegar</h3>
               <p className="text-gray-700 mb-6">
@@ -59,25 +56,17 @@ const EventDetails: React.FC = () => {
             </div>
             
             <div className="flex flex-col space-y-4">
-              <Button 
-                className="bg-cps-blue-dark text-white hover:bg-cps-blue-dark/90 w-full"
-                onClick={() => window.open("https://maps.google.com/?q=Villa Glam Iraé, Praça Nossa Sra. Aparecida, 195 - Indianópolis, São Paulo - SP, 04075-010", "_blank")}
-              >
+              <Button className="bg-cps-blue-dark text-white hover:bg-cps-blue-dark/90" onClick={() => window.open("https://maps.google.com/?q=Villa Glam Iraé, Praça Nossa Sra. Aparecida, 195 - Indianópolis, São Paulo - SP, 04075-010", "_blank")}>
                 Como chegar (Google Maps)
               </Button>
               
-              <Button 
-                className="bg-cps-blue-light text-white hover:bg-cps-blue-light/90 w-full"
-                onClick={() => window.open("https://waze.com/ul?q=Villa Glam Iraé, Praça Nossa Sra. Aparecida, 195 - Indianópolis, São Paulo - SP, 04075-010&navigate=yes", "_blank")}
-              >
+              <Button className="bg-cps-blue-light text-white hover:bg-cps-blue-light/90" onClick={() => window.open("https://waze.com/ul?q=Villa Glam Iraé, Praça Nossa Sra. Aparecida, 195 - Indianópolis, São Paulo - SP, 04075-010&navigate=yes", "_blank")}>
                 Como chegar (Waze)
               </Button>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default EventDetails;
