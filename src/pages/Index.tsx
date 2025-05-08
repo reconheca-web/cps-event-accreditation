@@ -1,17 +1,15 @@
-
 import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RegisterForm from "@/components/RegisterForm";
 import EventDetails from "@/components/EventDetails";
-
 const Index = () => {
   return <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
       
       <main className="flex-grow">
         {/* Hero Section - Swapped logo and title positions */}
-        <section className="bg-cps-wine text-white py-6 md:py-8 px-6">
+        <section className="bg-cps-wine text-white md:py-8 py-[16px] px-[23px]">
           <div className="container mx-auto">
             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
               {/* Title now on the left */}
