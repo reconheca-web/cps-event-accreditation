@@ -7,9 +7,9 @@ export interface Inscricao {
   telefone: string;
   tipo_unidade: string;
   nome_unidade: string;
-  check_in?: string;
-  created_at?: string;
-  updated_at?: string;
+  check_in?: Date;
+  created_at?: Date;
+  updated_at?: Date;
   user_id?: string;
   enviado_qrcode?: boolean;
   bloqueado_ia?: boolean;
