@@ -18,7 +18,16 @@ import {
 import { Button } from "../components/ui/button";
 import { useToast } from "../components/ui/use-toast";
 import { supabase } from "../lib/supabaseClient";
-import { UsersIcon, CheckCircleIcon, XCircleIcon, ClockIcon } from 'lucide-react';
+import { UsersIcon, CheckCircleIcon, XCircleIcon, ClockIcon, PencilIcon, PlusIcon } from 'lucide-react';
+import { Input } from "../components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../components/ui/dialog";
+import { unidadesList } from "@/data/locations";
 
 import { Inscricao, StatusInscricao } from "@/types/supabase";
 
@@ -27,17 +36,30 @@ interface DashboardStats {
   aprovados: number;
   rejeitados: number;
   pendentes: number;
+  checkins: number;
 }
 
 export default function Admin() {
   const [guests, setGuests] = useState<Inscricao[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>("todos");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingGuest, setEditingGuest] = useState<Inscricao | null>(null);
+  const [formData, setFormData] = useState<Partial<Inscricao>>({
+    nome_completo: "",
+    email: "",
+    telefone: "",
+    tipo_unidade: "",
+    nome_unidade: "",
+    status_inscricao: "pendente" as StatusInscricao,
+  });
   const [stats, setStats] = useState<DashboardStats>({ 
     total: 0,
     aprovados: 0,
     rejeitados: 0,
-    pendentes: 0
+    pendentes: 0,
+    checkins: 0
   });
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -47,10 +69,21 @@ export default function Admin() {
     fetchGuests();
   }, [statusFilter]);
 
+  useEffect(() => {
+    checkAuthorization();
+  }, []);
+
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
       navigate("/login");
+    }
+  };
+
+  const checkAuthorization = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user?.email === 'web@dkseventos.com.br') {
+      setIsAuthorized(true);
     }
   };
 
@@ -77,7 +110,8 @@ export default function Admin() {
         total: inscricoes.length,
         aprovados: inscricoes.filter(g => g.status_inscricao === 'aprovado').length,
         rejeitados: inscricoes.filter(g => g.status_inscricao === 'rejeitado').length,
-        pendentes: inscricoes.filter(g => g.status_inscricao === 'pendente' || !g.status_inscricao).length
+        pendentes: inscricoes.filter(g => g.status_inscricao === 'pendente' || !g.status_inscricao).length,
+        checkins: inscricoes.filter(g => g.check_in !== null).length
       };
       setStats(newStats);
       setLoading(false);
@@ -116,6 +150,8 @@ export default function Admin() {
     }
   };
 
+
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/login");
@@ -150,7 +186,7 @@ export default function Admin() {
       {/* Admin Content */}
       <main className="flex-grow container mx-auto py-8 px-4 space-y-6">
         {/* Dashboard Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
           <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-cps-wine">
             <div className="flex items-center justify-between">
               <div>
@@ -198,6 +234,21 @@ export default function Admin() {
               </div>
             </div>
           </div>
+          
+          <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-purple-500">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Check-ins</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.checkins}</p>
+              </div>
+              <div className="p-3 bg-purple-100 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-purple-500">
+                  <polyline points="9 11 12 14 22 4"></polyline>
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Tabela de Inscritos */}
@@ -225,13 +276,36 @@ export default function Admin() {
                 </SelectContent>
               </Select>
             </div>
-            <Button 
-              variant="outline" 
-              onClick={handleLogout}
-              className="w-full md:w-auto"
-            >
-              Sair
-            </Button>
+            <div className="flex gap-2 flex-col md:flex-row w-full md:w-auto">
+              {isAuthorized && (
+                <Button
+                  variant="default"
+                  onClick={() => {
+                    setEditingGuest(null);
+                    setFormData({
+                      nome_completo: "",
+                      email: "",
+                      telefone: "",
+                      tipo_unidade: "",
+                      nome_unidade: "",
+                      status_inscricao: "pendente",
+                    });
+                    setIsModalOpen(true);
+                  }}
+                  className="w-full md:w-auto bg-cps-wine hover:bg-cps-wine/90"
+                >
+                  <PlusIcon className="mr-2 h-4 w-4" />
+                  Adicionar Inscrito
+                </Button>
+              )}
+              <Button 
+                variant="outline" 
+                onClick={handleLogout}
+                className="w-full md:w-auto"
+              >
+                Sair
+              </Button>
+            </div>
           </div>
 
           {/* Table */}
@@ -239,12 +313,13 @@ export default function Admin() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[20%]">Nome</TableHead>
+                  <TableHead className="w-[18%]">Nome</TableHead>
                   <TableHead className="w-[15%]">Email</TableHead>
-                  <TableHead className="w-[12%]">Telefone</TableHead>
-                  <TableHead className="w-[10%]">Tipo Unidade</TableHead>
+                  <TableHead className="w-[10%]">Telefone</TableHead>
+                  <TableHead className="w-[8%]">Tipo Unidade</TableHead>
                   <TableHead className="w-[15%]">Nome Unidade</TableHead>
-                  <TableHead className="w-[10%]">Status</TableHead>
+                  <TableHead className="w-[8%]">Status</TableHead>
+                  <TableHead className="w-[8%]">Check-in</TableHead>
                   <TableHead className="w-[10%]">Data Inscrição</TableHead>
                   <TableHead className="w-[8%]">Ações</TableHead>
                 </TableRow>
@@ -267,6 +342,17 @@ export default function Admin() {
                       }`}>
                         {guest.status_inscricao || 'pendente'}
                       </span>
+                    </TableCell>
+                    <TableCell>
+                      {guest.check_in ? (
+                        <span className="inline-flex px-2 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                          Realizado
+                        </span>
+                      ) : (
+                        <span className="inline-flex px-2 py-1 rounded-full text-sm bg-gray-100 text-gray-800">
+                          Pendente
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell className="whitespace-nowrap">
                       {guest.created_at ? new Date(guest.created_at).toLocaleDateString() : '-'}
@@ -291,6 +377,20 @@ export default function Admin() {
                         >
                           Rejeitar
                         </Button>
+                        {isAuthorized && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setEditingGuest(guest);
+                              setFormData(guest);
+                              setIsModalOpen(true);
+                            }}
+                            className="border-gray-500 text-gray-600 hover:bg-gray-50 px-2 py-1 h-auto"
+                          >
+                            <PencilIcon className="h-4 w-4" />
+                          </Button>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -302,6 +402,156 @@ export default function Admin() {
           </div>
         </div>
       </main>
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              {editingGuest ? "Editar Inscrição" : "Nova Inscrição"}
+            </DialogTitle>
+          </DialogHeader>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              try {
+                if (editingGuest) {
+                  const { error } = await supabase
+                    .from("inscricoes_evento_cps")
+                    .update(formData)
+                    .eq("id", editingGuest.id);
+
+                  if (error) throw error;
+
+                  toast({
+                    title: "Sucesso",
+                    description: "Inscrição atualizada com sucesso!",
+                  });
+                } else {
+                  const { error } = await supabase
+                    .from("inscricoes_evento_cps")
+                    .insert([formData]);
+
+                  if (error) throw error;
+
+                  toast({
+                    title: "Sucesso",
+                    description: "Nova inscrição criada com sucesso!",
+                  });
+                }
+
+                setIsModalOpen(false);
+                fetchGuests();
+              } catch (error: any) {
+                toast({
+                  variant: "destructive",
+                  title: "Erro ao salvar",
+                  description: error.message,
+                });
+              }
+            }}
+            className="space-y-4"
+          >
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Nome Completo</label>
+                <Input
+                  value={formData.nome_completo || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      nome_completo: e.target.value,
+                    }))
+                  }
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Email</label>
+                <Input
+                  type="email"
+                  value={formData.email || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, email: e.target.value }))
+                  }
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Telefone</label>
+                <Input
+                  value={formData.telefone || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, telefone: e.target.value }))
+                  }
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Tipo de Unidade</label>
+                <Select
+                  value={formData.tipo_unidade || ""}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({ ...prev, tipo_unidade: value }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o tipo de unidade" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ETEC">ETEC</SelectItem>
+                    <SelectItem value="FATEC">FATEC</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Nome da Unidade</label>
+                <Select
+                  value={formData.nome_unidade || ""}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      nome_unidade: value,
+                    }))
+                  }
+                  disabled={!formData.tipo_unidade}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione a unidade" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {formData.tipo_unidade && unidadesList[formData.tipo_unidade as keyof typeof unidadesList]?.map((unidade) => (
+                      <SelectItem key={unidade} value={unidade}>
+                        {unidade}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {!formData.tipo_unidade && (
+                  <p className="text-sm text-gray-500 mt-1">
+                    Selecione primeiro o tipo de unidade
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" className="bg-cps-wine hover:bg-cps-wine/90">
+                {editingGuest ? "Atualizar" : "Criar"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
