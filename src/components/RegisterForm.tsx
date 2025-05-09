@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { 
   Form,
   FormControl,
@@ -17,6 +17,7 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { ChevronDown } from "lucide-react";
 
 import { useForm } from "react-hook-form";
 import { FormErrors, validateForm, maskPhone } from "@/utils/validations";
@@ -43,9 +44,16 @@ const RegisterForm: React.FC = () => {
   const [unidadeOptions, setUnidadeOptions] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const [mobileSearchMode, setMobileSearchMode] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const createInscricaoMutation = useCreateInscricao();
+  
+  // Detecta se é um dispositivo móvel
+  const isMobileDevice = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || ('ontouchstart' in window);
+  }, []);
   
   const form = useForm<FormValues>({
     defaultValues: {
@@ -249,71 +257,109 @@ const RegisterForm: React.FC = () => {
                     </FormControl>
                   ) : (
                     <div className="space-y-0 w-full">
-                      <Select
-                        onValueChange={(value) => form.setValue("nomeUnidade", value)}
-                        value={field.value}
-                        disabled={!form.watch("tipoUnidade") || unidadeOptions.length === 0}
-                        onOpenChange={setIsSelectOpen}
-                        open={isSelectOpen}
-                      >
-                        <FormControl>
-                          <SelectTrigger 
-                            className={errors.nomeUnidade ? "border-red-500 w-full" : "w-full"}
-                          >
-                            <SelectValue placeholder="Selecione a unidade" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent 
-                          className="max-h-[400px] overflow-auto" 
-                          position="popper"
-                          onCloseAutoFocus={(e) => e.preventDefault()}
-                          onPointerDownOutside={(e) => {
-                            // Evita que o dropdown feche quando o usuario toca dentro do input
-                            if (e.target && (e.target as HTMLElement).closest('input')) {
-                              e.preventDefault();
-                            }
-                          }}
-                        >
+                      {isMobileDevice ? (
+                        // Versão específica para dispositivos móveis
+                        <div className="w-full">
+                          {/* Trigger simulado que mostra a unidade selecionada ou permite abrir o modo de pesquisa */}
                           <div 
-                            className="px-2 py-2 sticky top-0 bg-white z-10 border-b"
-                            // Previne eventos no container do input
-                            onClick={(e) => e.stopPropagation()}
-                            onTouchStart={(e) => e.stopPropagation()}
-                            onTouchEnd={(e) => e.stopPropagation()}
-                            onTouchMove={(e) => e.stopPropagation()}
-                            onMouseDown={(e) => e.stopPropagation()}
+                            onClick={() => setMobileSearchMode(true)} 
+                            className={`flex h-10 w-full items-center justify-between rounded-md border ${errors.nomeUnidade ? "border-red-500" : "border-input"} bg-background px-3 py-2 text-sm ${!form.watch("tipoUnidade") || unidadeOptions.length === 0 ? "opacity-50" : ""}`}
                           >
-                            <Input
-                              ref={searchInputRef}
-                              placeholder="Digite para buscar..."
-                              value={searchTerm}
-                              onChange={(e) => setSearchTerm(e.target.value)}
-                              className="w-full"
-                              // Previne todos os eventos possíveis no input para evitar fechamento
-                              onClick={(e) => e.stopPropagation()}
-                              onTouchStart={(e) => e.stopPropagation()}
-                              onTouchEnd={(e) => e.stopPropagation()}
-                              onTouchMove={(e) => e.stopPropagation()}
-                              onMouseDown={(e) => e.stopPropagation()}
-                              onPointerDown={(e) => e.stopPropagation()}
-                              // Necessário para dispositivos iOS
-                              onBlur={(e) => e.preventDefault()}
-                            />
+                            <span className="truncate">
+                              {field.value || "Selecione a unidade"}
+                            </span>
+                            <ChevronDown className="h-4 w-4 opacity-50" />
                           </div>
                           
-                          {filteredUnidades.length === 0 ? (
-                            <div className="p-2 text-center text-sm text-gray-500">
-                              Nenhuma unidade encontrada
+                          {/* Modal de pesquisa para dispositivos móveis */}
+                          {mobileSearchMode && (
+                            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex flex-col">
+                              <div className="bg-white p-4 flex items-center">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => setMobileSearchMode(false)}
+                                  className="mr-2"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 15-6-6m6 0-6 6"/></svg>
+                                </Button>
+                                <Input
+                                  autoFocus
+                                  placeholder="Digite para buscar..."
+                                  value={searchTerm}
+                                  onChange={(e) => setSearchTerm(e.target.value)}
+                                  className="w-full"
+                                />
+                              </div>
+                              <div className="flex-1 overflow-auto bg-white">
+                                {filteredUnidades.length === 0 ? (
+                                  <div className="p-4 text-center text-sm text-gray-500">
+                                    Nenhuma unidade encontrada
+                                  </div>
+                                ) : (
+                                  <div className="divide-y">
+                                    {filteredUnidades.map((unidade) => (
+                                      <div 
+                                        key={unidade} 
+                                        className="p-3 hover:bg-gray-50 active:bg-gray-100"
+                                        onClick={() => {
+                                          form.setValue("nomeUnidade", unidade);
+                                          setMobileSearchMode(false);
+                                        }}
+                                      >
+                                        {unidade}
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          ) : (
-                            filteredUnidades.map((unidade) => (
-                              <SelectItem key={unidade} value={unidade}>
-                                {unidade}
-                              </SelectItem>
-                            ))
                           )}
-                        </SelectContent>
-                      </Select>
+                        </div>
+                      ) : (
+                        // Versão para desktop - mantém o comportamento original
+                        <Select
+                          onValueChange={(value) => form.setValue("nomeUnidade", value)}
+                          value={field.value}
+                          disabled={!form.watch("tipoUnidade") || unidadeOptions.length === 0}
+                          onOpenChange={setIsSelectOpen}
+                          open={isSelectOpen}
+                        >
+                          <FormControl>
+                            <SelectTrigger 
+                              className={errors.nomeUnidade ? "border-red-500 w-full" : "w-full"}
+                            >
+                              <SelectValue placeholder="Selecione a unidade" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent 
+                            className="max-h-[400px] overflow-auto" 
+                            position="popper"
+                          >
+                            <div className="px-2 py-2 sticky top-0 bg-white z-10 border-b">
+                              <Input
+                                ref={searchInputRef}
+                                placeholder="Digite para buscar..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full"
+                              />
+                            </div>
+                            
+                            {filteredUnidades.length === 0 ? (
+                              <div className="p-2 text-center text-sm text-gray-500">
+                                Nenhuma unidade encontrada
+                              </div>
+                            ) : (
+                              filteredUnidades.map((unidade) => (
+                                <SelectItem key={unidade} value={unidade}>
+                                  {unidade}
+                                </SelectItem>
+                              ))
+                            )}
+                          </SelectContent>
+                        </Select>
+                      )}
                     </div>
                   )}
                   {errors.nomeUnidade && <FormMessage>{errors.nomeUnidade}</FormMessage>}
