@@ -266,17 +266,38 @@ const RegisterForm: React.FC = () => {
                         <SelectContent 
                           className="max-h-[400px] overflow-auto" 
                           position="popper"
+                          onCloseAutoFocus={(e) => e.preventDefault()}
+                          onPointerDownOutside={(e) => {
+                            // Evita que o dropdown feche quando o usuario toca dentro do input
+                            if (e.target && (e.target as HTMLElement).closest('input')) {
+                              e.preventDefault();
+                            }
+                          }}
                         >
-                          <div className="px-2 py-2 sticky top-0 bg-white z-10 border-b">
+                          <div 
+                            className="px-2 py-2 sticky top-0 bg-white z-10 border-b"
+                            // Previne eventos no container do input
+                            onClick={(e) => e.stopPropagation()}
+                            onTouchStart={(e) => e.stopPropagation()}
+                            onTouchEnd={(e) => e.stopPropagation()}
+                            onTouchMove={(e) => e.stopPropagation()}
+                            onMouseDown={(e) => e.stopPropagation()}
+                          >
                             <Input
                               ref={searchInputRef}
                               placeholder="Digite para buscar..."
                               value={searchTerm}
                               onChange={(e) => setSearchTerm(e.target.value)}
                               className="w-full"
-                              // Previne propagação de eventos para evitar fechamento em dispositivos móveis
+                              // Previne todos os eventos possíveis no input para evitar fechamento
                               onClick={(e) => e.stopPropagation()}
                               onTouchStart={(e) => e.stopPropagation()}
+                              onTouchEnd={(e) => e.stopPropagation()}
+                              onTouchMove={(e) => e.stopPropagation()}
+                              onMouseDown={(e) => e.stopPropagation()}
+                              onPointerDown={(e) => e.stopPropagation()}
+                              // Necessário para dispositivos iOS
+                              onBlur={(e) => e.preventDefault()}
                             />
                           </div>
                           
