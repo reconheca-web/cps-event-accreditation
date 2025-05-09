@@ -77,9 +77,13 @@ const RegisterForm: React.FC = () => {
     unidade.toLowerCase().includes(searchTerm.toLowerCase())
   );
   
-  // Foca no campo de busca quando o Select é aberto
+  // Foca no campo de busca quando o Select é aberto (apenas em dispositivos desktop)
   useEffect(() => {
-    if (isSelectOpen && searchInputRef.current) {
+    // Verifica se é um dispositivo móvel (tela sensível ao toque)
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || ('ontouchstart' in window);
+    
+    if (isSelectOpen && searchInputRef.current && !isMobileDevice) {
+      // Apenas foca automaticamente em dispositivos não-móveis
       setTimeout(() => {
         searchInputRef.current?.focus();
       }, 100);
@@ -270,6 +274,9 @@ const RegisterForm: React.FC = () => {
                               value={searchTerm}
                               onChange={(e) => setSearchTerm(e.target.value)}
                               className="w-full"
+                              // Previne propagação de eventos para evitar fechamento em dispositivos móveis
+                              onClick={(e) => e.stopPropagation()}
+                              onTouchStart={(e) => e.stopPropagation()}
                             />
                           </div>
                           
