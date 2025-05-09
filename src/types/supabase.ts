@@ -1,0 +1,41 @@
+export type StatusInscricao = 'pendente' | 'aprovado' | 'rejeitado';
+
+export interface Inscricao {
+  id: string;
+  nome_completo: string;
+  email: string;
+  telefone: string;
+  tipo_unidade: string;
+  nome_unidade: string;
+  check_in?: string;
+  created_at?: string;
+  updated_at?: string;
+  user_id?: string;
+  enviado_qrcode?: boolean;
+  bloqueado_ia?: boolean;
+  status_inscricao?: StatusInscricao;
+}
+
+export interface InscricaoInput {
+  nome_completo: string;
+  email: string;
+  telefone: string;
+  tipo_unidade: string;
+  nome_unidade: string;
+}
+
+export interface Database {
+  public: {
+    Tables: {
+      inscricoes_evento_cps: {
+        Row: Inscricao;
+        Insert: InscricaoInput;
+        Update: Partial<InscricaoInput>;
+      };
+    };
+    Functions: {};
+    Enums: {
+      status_inscricao_enum: StatusInscricao;
+    };
+  };
+}
