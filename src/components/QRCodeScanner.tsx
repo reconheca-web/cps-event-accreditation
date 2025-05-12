@@ -55,6 +55,12 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
   }, [scanning]);
 
   const startScanner = () => {
+    // Limpa o elemento HTML antes de inicializar o scanner
+    const readerElement = document.getElementById("reader");
+    if (readerElement) {
+      readerElement.innerHTML = "";
+    }
+    
     // Verifica se o scanner já existe
     if (!scannerRef.current) {
       try {
@@ -80,12 +86,14 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
       }
     }
     
-    // Configuração do scanner
+    // Configuração do scanner otimizada para dispositivos móveis
     const config = { 
       fps: 10, 
       qrbox: { width: 250, height: 250 },
-      aspectRatio: 1.0
-      // Nota: Formatos específicos são detectados automaticamente
+      aspectRatio: 1.0,
+      // Nota: Não especificamos formatos, o scanner detectará QR Codes automaticamente
+      rememberLastUsedCamera: true, // Lembra da última câmera usada
+      useBarCodeDetectorIfSupported: true // Usa a API nativa de detecção de código de barras quando disponível
     };
     
     // Atualiza o estado para escaneando
@@ -93,20 +101,25 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
     
     // Inicia o scanner com tratamento de erros adequado
     try {
-      scannerRef.current.start(
-        { facingMode: cameraFacingMode },
-        config,
-        handleQRCodeSuccess,
-        handleQRCodeError
-      ).catch(error => {
-        setScanning(false);
-        toast({
-          variant: "destructive",
-          title: "Erro ao iniciar câmera",
-          description: "Verifique se você concedeu permissão para acessar a câmera.",
-        });
-        console.error("Erro ao iniciar o scanner:", error);
-      });
+      // Adiciona um pequeno atraso para garantir que o DOM esteja pronto
+      setTimeout(() => {
+        if (scannerRef.current) {
+          scannerRef.current.start(
+            { facingMode: cameraFacingMode },
+            config,
+            handleQRCodeSuccess,
+            handleQRCodeError
+          ).catch(error => {
+            setScanning(false);
+            toast({
+              variant: "destructive",
+              title: "Erro ao iniciar câmera",
+              description: "Verifique se você concedeu permissão para acessar a câmera.",
+            });
+            console.error("Erro ao iniciar o scanner:", error);
+          });
+        }
+      }, 300);
     } catch (error) {
       setScanning(false);
       toast({
@@ -127,17 +140,12 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
         }).catch(error => {
           // Mesmo com erro, atualizamos o estado para não escaneando
           setScanning(false);
-          // Apenas logamos erros que não são do tipo NotFoundException
-          if (!error.toString().includes("NotFoundException")) {
-            console.error("Erro ao parar o scanner:", error);
-          }
+          console.error("Erro ao parar o scanner:", error);
         });
       } catch (error) {
-        // Se ocorrer qualquer erro, garantimos que o estado seja atualizado
+        // Em caso de erro, garantimos que o estado seja atualizado
         setScanning(false);
-        if (!error.toString().includes("NotFoundException")) {
-          console.error("Erro ao parar o scanner:", error);
-        }
+        console.error("Erro ao parar o scanner:", error);
       }
     } else {
       // Garantimos que o estado esteja correto mesmo se o scanner não existir
@@ -145,21 +153,36 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
     }
   };
   
-  const toggleCamera = async () => {
-    // Primeiro para o scanner atual
+  const toggleCamera = () => {
     if (scanning) {
-      await stopScanner();
+      // Para o scanner atual
+      stopScanner();
+      
+      // Alterna o modo da câmera
+      setCameraFacingMode(prev => prev === "environment" ? "user" : "environment");
+      
+      // Aumenta o tempo de espera para dispositivos Android
+      // e adiciona tratamento de erro para evitar travamentos
+      setTimeout(() => {
+        try {
+          // Limpa o elemento HTML antes de reiniciar o scanner
+          const readerElement = document.getElementById("reader");
+          if (readerElement) {
+            readerElement.innerHTML = "";
+          }
+          
+          // Reinicia o scanner com o novo modo de câmera
+          startScanner();
+        } catch (error) {
+          console.error("Erro ao alternar câmera:", error);
+          toast({
+            variant: "destructive",
+            title: "Erro ao alternar câmera",
+            description: "Tente fechar e abrir o scanner novamente.",
+          });
+        }
+      }, 1000); // Aumentado para 1000ms para dar mais tempo para a câmera alternar
     }
-    
-    // Alterna o modo da câmera
-    setCameraFacingMode(prev => prev === "environment" ? "user" : "environment");
-    
-    // Reinicia o scanner com a nova câmera após um pequeno delay
-    setTimeout(() => {
-      if (scannerRef.current) {
-        startScanner();
-      }
-    }, 300);
   };
 
   const handleQRCodeSuccess = async (decodedText: string) => {
@@ -184,7 +207,57 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
         return;
       }
       
-      // Atualiza o check-in no banco de dados
+      // Primeiro, verifica se o usuário já realizou check-in
+      const { data: checkData, error: checkError } = await supabase
+        .from("inscricoes_evento_cps")
+        .select("nome_completo, check_in")
+        .eq("id", decodedText)
+        .single();
+      
+      if (checkError) {
+        throw checkError;
+      }
+      
+      // Se não encontrou o inscrito
+      if (!checkData) {
+        setLastCheckInResult({
+          success: false,
+          message: "Não foi possível encontrar uma inscrição com este QR Code."
+        });
+        
+        toast({
+          variant: "destructive",
+          title: "Inscrição não encontrada",
+          description: "Não foi possível encontrar uma inscrição com este QR Code.",
+        });
+        return;
+      }
+      
+      // Verifica se já fez check-in anteriormente
+      if (checkData.check_in) {
+        setLastCheckInResult({
+          success: true,
+          message: "Este participante já realizou o check-in anteriormente.",
+          nome: checkData.nome_completo
+        });
+        
+        toast({
+          title: "Check-in já realizado",
+          description: `${checkData.nome_completo} já realizou o check-in anteriormente.`,
+        });
+        
+        // Aguarda 2 segundos para exibir o resultado antes de fechar
+        setTimeout(() => {
+          if (window.location.pathname !== "/admin") {
+            navigate("/admin");
+          } else {
+            onClose();
+          }
+        }, 2000);
+        return;
+      }
+      
+      // Se não fez check-in, atualiza o banco de dados
       const { data, error } = await supabase
         .from("inscricoes_evento_cps")
         .update({ check_in: new Date().toISOString() })
@@ -243,8 +316,7 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
       });
     }
   };
-  
-  // Função segura para fechar o scanner
+
   const handleClose = () => {
     // Para o scanner se estiver ativo para evitar problemas
     if (scanning) {
@@ -252,16 +324,8 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
         // Garantimos que o scanner seja completamente parado antes de fechar
         scannerRef.current?.stop().then(() => {
           setScanning(false);
-          // Limpa o estado de resultado antes de fechar
           setLastCheckInResult(null);
-          
-          // Garantimos que estamos na rota /admin
-          if (window.location.pathname !== "/admin") {
-            navigate("/admin");
-          } else {
-            // Chama a função onClose passada como prop
-            onClose();
-          }
+          onClose();
         }).catch(error => {
           console.error("Erro ao parar o scanner:", error);
           // Mesmo com erro, tentamos fechar o modal
@@ -284,12 +348,9 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
   };
 
   const handleQRCodeError = (error: any) => {
-    // Este callback é chamado para erros não fatais durante o scanning
-    // Verificamos se o erro é do tipo NotFoundException, que é comum durante o scanning
-    // e não representa um problema real, apenas que nenhum QR code foi detectado ainda
-    if (!error.toString().includes("NotFoundException")) {
-      console.error("Erro durante o scanning:", error);
-    }
+    // Apenas registra o erro no console, não interrompe o scanner
+    console.error("Erro na leitura do QR Code:", error);
+    // Não exibimos toast para evitar spam de mensagens durante o escaneamento
   };
 
   return (
