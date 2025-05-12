@@ -547,37 +547,51 @@ export default function Admin() {
                   <SelectContent>
                     <SelectItem value="ETEC">ETEC</SelectItem>
                     <SelectItem value="FATEC">FATEC</SelectItem>
+                    <SelectItem value="Coordenadoria">Coordenadoria</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
                 <label className="text-sm font-medium">Nome da Unidade</label>
-                <Select
-                  value={formData.nome_unidade || ""}
-                  onValueChange={(value) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      nome_unidade: value,
-                    }))
-                  }
-                  disabled={!formData.tipo_unidade}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione a unidade" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
-                    {formData.tipo_unidade && unidadesList[formData.tipo_unidade as keyof typeof unidadesList]?.map((unidade) => (
-                      <SelectItem key={unidade} value={unidade}>
-                        {unidade}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {!formData.tipo_unidade && (
-                  <p className="text-sm text-gray-500 mt-1">
-                    Selecione primeiro o tipo de unidade
-                  </p>
+                {formData.tipo_unidade === "Coordenadoria" ? (
+                  <Input
+                    value={formData.nome_unidade || ""}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, nome_unidade: e.target.value }))
+                    }
+                    placeholder="Digite o nome da coordenadoria"
+                    required
+                  />
+                ) : (
+                  <>
+                    <Select
+                      value={formData.nome_unidade || ""}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          nome_unidade: value,
+                        }))
+                      }
+                      disabled={!formData.tipo_unidade}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a unidade" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-[300px]">
+                        {formData.tipo_unidade && unidadesList[formData.tipo_unidade as keyof typeof unidadesList]?.map((unidade) => (
+                          <SelectItem key={unidade} value={unidade}>
+                            {unidade}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {!formData.tipo_unidade && (
+                      <p className="text-sm text-gray-500 mt-1">
+                        Selecione primeiro o tipo de unidade
+                      </p>
+                    )}
+                  </>
                 )}
               </div>
             </div>
