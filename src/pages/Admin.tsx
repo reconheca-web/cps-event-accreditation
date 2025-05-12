@@ -18,7 +18,7 @@ import {
 import { Button } from "../components/ui/button";
 import { useToast } from "../components/ui/use-toast";
 import { supabase } from "../lib/supabaseClient";
-import { UsersIcon, CheckCircleIcon, XCircleIcon, ClockIcon, PencilIcon, PlusIcon } from 'lucide-react';
+import { UsersIcon, CheckCircleIcon, XCircleIcon, ClockIcon, PencilIcon, PlusIcon, QrCodeIcon } from 'lucide-react';
 import { Input } from "../components/ui/input";
 import {
   Dialog,
@@ -28,6 +28,7 @@ import {
   DialogTrigger,
 } from "../components/ui/dialog";
 import { unidadesList } from "@/data/locations";
+import { QRCodeScanner } from "../components/QRCodeScanner";
 
 import { Inscricao, StatusInscricao } from "@/types/supabase";
 
@@ -45,7 +46,9 @@ export default function Admin() {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>("todos");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isQRScannerOpen, setIsQRScannerOpen] = useState(false);
   const [editingGuest, setEditingGuest] = useState<Inscricao | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0); // Chave para forçar re-renderização
   const [formData, setFormData] = useState<Partial<Inscricao>>({
     nome_completo: "",
     email: "",
@@ -64,10 +67,19 @@ export default function Admin() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Efeito para carregar dados quando o filtro muda ou quando a chave de atualização muda
   useEffect(() => {
     checkAuth();
     fetchGuests();
-  }, [statusFilter]);
+  }, [statusFilter, refreshKey]);
+  
+  // Efeito para garantir que os dados sejam recarregados quando o modal é fechado
+  useEffect(() => {
+    if (!isQRScannerOpen) {
+      // Força uma nova busca de dados quando o modal é fechado
+      fetchGuests();
+    }
+  }, [isQRScannerOpen]);
 
   useEffect(() => {
     checkAuthorization();
@@ -84,6 +96,27 @@ export default function Admin() {
     const { data: { session } } = await supabase.auth.getSession();
     if (session?.user?.email === 'web@dkseventos.com.br') {
       setIsAuthorized(true);
+    }
+  };
+  
+  const handleOpenQRScanner = () => {
+    // Armazena a URL atual antes de abrir o scanner
+    setIsQRScannerOpen(true);
+  };
+
+  const handleCloseQRScanner = () => {
+    // Primeiro atualizamos os dados
+    fetchGuests();
+    
+    // Depois fechamos o modal
+    setIsQRScannerOpen(false);
+    
+    // Força uma re-renderização do componente para evitar a tela branca
+    setRefreshKey(prevKey => prevKey + 1);
+    
+    // Garantimos que estamos na rota /admin
+    if (window.location.pathname !== "/admin") {
+      navigate("/admin");
     }
   };
 
@@ -278,25 +311,37 @@ export default function Admin() {
             </div>
             <div className="flex gap-2 flex-col md:flex-row w-full md:w-auto">
               {isAuthorized && (
-                <Button
-                  variant="default"
-                  onClick={() => {
-                    setEditingGuest(null);
-                    setFormData({
-                      nome_completo: "",
-                      email: "",
-                      telefone: "",
-                      tipo_unidade: "",
-                      nome_unidade: "",
-                      status_inscricao: "pendente",
-                    });
-                    setIsModalOpen(true);
-                  }}
-                  className="w-full md:w-auto bg-cps-wine hover:bg-cps-wine/90"
-                >
-                  <PlusIcon className="mr-2 h-4 w-4" />
-                  Adicionar Inscrito
-                </Button>
+                <>
+                  <Button
+                    variant="default"
+                    onClick={() => {
+                      setEditingGuest(null);
+                      setFormData({
+                        nome_completo: "",
+                        email: "",
+                        telefone: "",
+                        tipo_unidade: "",
+                        nome_unidade: "",
+                        status_inscricao: "pendente",
+                      });
+                      setIsModalOpen(true);
+                    }}
+                    className="w-full md:w-auto bg-cps-wine hover:bg-cps-wine/90"
+                  >
+                    <PlusIcon className="mr-2 h-4 w-4" />
+                    Adicionar Inscrito
+                  </Button>
+                  
+                  {/* Botão de Check-in via QR Code */}
+                  <Button
+                    variant="default"
+                    onClick={handleOpenQRScanner}
+                    className="w-full md:w-auto bg-cps-wine hover:bg-cps-wine/90"
+                  >
+                    <QrCodeIcon className="mr-2 h-4 w-4" />
+                    Fazer Check-in
+                  </Button>
+                </>
               )}
               <Button 
                 variant="outline" 
@@ -552,6 +597,35 @@ export default function Admin() {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Dialog para o Scanner de QR Code - Implementação robusta para evitar tela branca */}
+      {isQRScannerOpen && (
+        <Dialog 
+          open={isQRScannerOpen} 
+          onOpenChange={(open) => {
+            if (!open) {
+              // Primeiro atualizamos os dados
+              fetchGuests();
+              // Depois fechamos o modal
+              setIsQRScannerOpen(false);
+              // Força uma re-renderização do componente
+              setRefreshKey(prevKey => prevKey + 1);
+            }
+          }}
+        >
+          <DialogContent 
+            className="sm:max-w-md max-h-[90vh] overflow-y-auto"
+          >
+            <DialogHeader className="pb-2">
+              <DialogTitle className="text-xl font-bold text-cps-wine">Scanner de QR Code para Check-in</DialogTitle>
+              <p className="text-sm text-gray-500 mt-1">
+                Escaneie o QR Code do participante para registrar o check-in no evento
+              </p>
+            </DialogHeader>
+            <QRCodeScanner onClose={handleCloseQRScanner} />
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
