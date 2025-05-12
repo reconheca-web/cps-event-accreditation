@@ -292,7 +292,7 @@ export default function Admin() {
             <div className="min-w-[1024px]">
 
           {/* Header Actions */}
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+          <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
             <div className="flex items-center gap-4 w-full md:w-auto">
               <Select
                 value={statusFilter}
@@ -309,7 +309,7 @@ export default function Admin() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex gap-2 flex-col md:flex-row w-full md:w-auto">
+            <div className="flex gap-2 justify-start md:justify-end w-full md:w-auto">
               {isAuthorized && (
                 <>
                   <Button
@@ -326,29 +326,32 @@ export default function Admin() {
                       });
                       setIsModalOpen(true);
                     }}
-                    className="w-full md:w-auto bg-cps-wine hover:bg-cps-wine/90"
+                    className="bg-cps-wine hover:bg-cps-wine/90 w-auto"
+                    size="sm"
                   >
-                    <PlusIcon className="mr-2 h-4 w-4" />
-                    Adicionar Inscrito
+                    <PlusIcon className="mr-1 h-4 w-4" />
+                    <span className="whitespace-nowrap text-sm">Adicionar</span>
                   </Button>
                   
                   {/* Botão de Check-in via QR Code */}
                   <Button
                     variant="default"
                     onClick={handleOpenQRScanner}
-                    className="w-full md:w-auto bg-cps-wine hover:bg-cps-wine/90"
+                    className="bg-cps-wine hover:bg-cps-wine/90 w-auto"
+                    size="sm"
                   >
-                    <QrCodeIcon className="mr-2 h-4 w-4" />
-                    Fazer Check-in
+                    <QrCodeIcon className="mr-1 h-4 w-4" />
+                    <span className="whitespace-nowrap text-sm">Check-in</span>
                   </Button>
                 </>
               )}
               <Button 
                 variant="outline" 
                 onClick={handleLogout}
-                className="w-full md:w-auto"
+                size="sm"
+                className="w-auto"
               >
-                Sair
+                <span className="whitespace-nowrap text-sm">Sair</span>
               </Button>
             </div>
           </div>
