@@ -7,6 +7,7 @@ export interface Inscricao {
   telefone: string;
   tipo_unidade: string;
   nome_unidade: string;
+  cargo?: string;
   check_in?: Date;
   created_at?: Date;
   updated_at?: Date;
@@ -22,6 +23,7 @@ export interface InscricaoInput {
   telefone: string;
   tipo_unidade: string;
   nome_unidade: string;
+  cargo?: string;
 }
 
 export interface Database {

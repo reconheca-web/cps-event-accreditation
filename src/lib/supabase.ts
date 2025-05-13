@@ -22,21 +22,41 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 // Função auxiliar para capturar erros de duplicidade
 function handleErrorMessage(error: any): string {
   if (typeof error === 'object' && error !== null) {
+    console.log('Detalhes do erro recebido:', error);
+    
     // Verificar erro de duplicidade (23505 é o código de violação de unicidade no PostgreSQL)
-    if (error.code === '23505' || (error.details && error.details.includes('already exists'))) {
+    if (error.code === '23505' || 
+        (error.details && error.details.includes('already exists')) ||
+        (error.message && error.message.includes('duplicate key'))) {
+      
       const msg = error.message || error.details || '';
+      console.log('Mensagem de erro completa:', msg);
+      
+      // Verificar se a mensagem contém referências a email ou telefone
       if (msg.toLowerCase().includes('email')) {
-        return 'Este e-mail já está cadastrado no sistema.';
+        return 'Este e-mail já está cadastrado no evento. Por favor, utilize outro e-mail ou entre em contato com a equipe CPS.';
       }
+      
       if (msg.toLowerCase().includes('telefone')) {
-        return 'Este telefone já está cadastrado no sistema.';
+        return 'Este telefone já está cadastrado no evento. Por favor, utilize outro número ou entre em contato com a equipe CPS.';
       }
-      return 'Este registro já existe no sistema.';
+      
+      // Se não conseguir identificar o campo específico, mas for erro de duplicidade
+      return 'Este cadastro já existe no sistema. Você já está inscrito neste evento.';
+    }
+    
+    // Verificar outros tipos de erros conhecidos
+    if (error.code || error.message) {
+      console.log(`Erro identificado: Código ${error.code}, Mensagem: ${error.message}`);
+      // Tentar extrair informações úteis do erro
+      if (error.message && error.message.toLowerCase().includes('unique')) {
+        return 'Já existe um cadastro com estas informações no evento. Por favor, verifique seus dados ou entre em contato com a organização.';
+      }
     }
   }
   
   // Mensagem genérica para outros erros
-  return 'Erro ao processar sua inscrição. Por favor, tente novamente mais tarde.';
+  return 'Erro ao processar sua inscrição. Por favor, tente novamente mais tarde ou entre em contato com a organização do evento.';
 }
 
 /**
@@ -51,6 +71,7 @@ export async function criarInscricao(dados: {
   telefone: string;
   tipo_unidade: string;
   nome_unidade: string;
+  cargo?: string;
 }) {
   try {
     // Validar dados localmente antes de enviar
@@ -64,7 +85,8 @@ export async function criarInscricao(dados: {
       email: dados.email.trim().toLowerCase(),
       telefone: dados.telefone.trim(),
       tipo_unidade: dados.tipo_unidade.trim(),
-      nome_unidade: dados.nome_unidade.trim()
+      nome_unidade: dados.nome_unidade.trim(),
+      cargo: dados.cargo ? dados.cargo.trim() : null
       // Os campos enviado_qrcode, bloqueado_ia e status_inscricao terão seus valores padrão aplicados pelo banco
     };
     
@@ -95,7 +117,28 @@ export async function criarInscricao(dados: {
         errorData = await response.json();
       } catch (e) {
         // Se não conseguir obter JSON, usar texto da resposta
-        errorData = { message: await response.text() };
+        const responseText = await response.text();
+        errorData = { message: responseText };
+        
+        // Tentar identificar erros de duplicidade no texto da resposta
+        if (responseText.includes('duplicate') || responseText.includes('already exists')) {
+          if (responseText.toLowerCase().includes('email')) {
+            errorData = { 
+              code: '23505', 
+              message: `Violação de chave única: email=${dadosEnvio.email} já está cadastrado no evento.` 
+            };
+          } else if (responseText.toLowerCase().includes('telefone')) {
+            errorData = { 
+              code: '23505', 
+              message: `Violação de chave única: telefone=${dadosEnvio.telefone} já está cadastrado no evento.` 
+            };
+          } else {
+            errorData = { 
+              code: '23505', 
+              message: 'Violação de chave única: este registro já existe no sistema.' 
+            };
+          }
+        }
       }
       
       console.error('Erro na resposta:', response.status, errorData);

@@ -17,7 +17,8 @@ export function useCreateInscricao() {
           email: inscricao.email,
           telefone: inscricao.telefone,
           tipo_unidade: inscricao.tipo_unidade,
-          nome_unidade: inscricao.nome_unidade
+          nome_unidade: inscricao.nome_unidade,
+          cargo: inscricao.cargo
         });
         
         return resultado;

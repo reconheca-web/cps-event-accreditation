@@ -33,6 +33,7 @@ interface FormValues {
   telefone: string;
   tipoUnidade: string;
   nomeUnidade: string;
+  cargo: string;
 }
 
 // Mock database of existing emails and phones for validation
@@ -62,6 +63,7 @@ const RegisterForm: React.FC = () => {
       telefone: "",
       tipoUnidade: "",
       nomeUnidade: "",
+      cargo: "",
     }
   });
   
@@ -129,23 +131,49 @@ const RegisterForm: React.FC = () => {
       email: data.email,
       telefone: data.telefone,
       tipo_unidade: data.tipoUnidade,
-      nome_unidade: data.nomeUnidade
+      nome_unidade: data.nomeUnidade,
+      cargo: data.cargo
     };
     
     // Enviar dados para o Supabase via mutation
     createInscricaoMutation.mutate(inscricaoData, {
       onSuccess: () => {
         console.log("Inscrição registrada com sucesso!");
-        // Limpar formulário
         form.reset();
         // Mostrar modal de sucesso
         setShowSuccessModal(true);
       },
       onError: (error: Error) => {
         console.error("Erro ao enviar inscrição:", error);
+        
+        // Verificar se a mensagem de erro contém informações sobre email ou telefone já cadastrado
+        const errorMessage = error.message || "";
+        let title = "Erro ao processar inscrição";
+        let description = errorMessage || "Ocorreu um erro ao processar sua inscrição. Por favor, tente novamente.";
+        
+        // Atualizar os erros do formulário para destacar visualmente o campo com problema
+        const newErrors: FormErrors = {};
+        
+        if (errorMessage.toLowerCase().includes('e-mail') || errorMessage.toLowerCase().includes('email')) {
+          title = "E-mail já cadastrado";
+          newErrors.email = errorMessage;
+        } else if (errorMessage.toLowerCase().includes('telefone')) {
+          title = "Telefone já cadastrado";
+          newErrors.telefone = errorMessage;
+        } else if (errorMessage.toLowerCase().includes('já existe') || 
+                   errorMessage.toLowerCase().includes('já está inscrito') || 
+                   errorMessage.toLowerCase().includes('já está cadastrado')) {
+          title = "Cadastro já existente";
+          // Não destacamos um campo específico neste caso
+        }
+        
+        // Atualizar os erros visuais no formulário
+        setErrors(newErrors);
+        
+        // Exibir toast com a mensagem de erro
         toast({
-          title: "Erro ao processar inscrição",
-          description: error.message || "Ocorreu um erro ao processar sua inscrição. Por favor, tente novamente.",
+          title: title,
+          description: description,
           variant: "destructive",
         });
       }
@@ -233,7 +261,8 @@ const RegisterForm: React.FC = () => {
                     <SelectContent>
                       <SelectItem value="ETEC">ETEC</SelectItem>
                       <SelectItem value="FATEC">FATEC</SelectItem>
-                      <SelectItem value="Coordenadoria">Coordenadoria</SelectItem>
+                      <SelectItem value="Núcleo Regional">Núcleo Regional</SelectItem>
+                      <SelectItem value="Administração Central">Administração Central</SelectItem>
                     </SelectContent>
                   </Select>
                   {errors.tipoUnidade && <FormMessage>{errors.tipoUnidade}</FormMessage>}
@@ -247,10 +276,10 @@ const RegisterForm: React.FC = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-gray-700">Nome da Unidade*</FormLabel>
-                  {form.watch("tipoUnidade") === "Coordenadoria" ? (
+                  {["Núcleo Regional", "Administração Central"].includes(form.watch("tipoUnidade")) ? (
                     <FormControl>
                       <Input 
-                        placeholder="Digite o nome da coordenadoria" 
+                        placeholder="Digite o nome da unidade" 
                         {...field} 
                         className={errors.nomeUnidade ? "border-red-500 w-full" : "w-full"}
                       />
@@ -363,6 +392,24 @@ const RegisterForm: React.FC = () => {
                     </div>
                   )}
                   {errors.nomeUnidade && <FormMessage>{errors.nomeUnidade}</FormMessage>}
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="cargo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700">Cargo</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Digite seu cargo (opcional)" 
+                      {...field} 
+                      className={errors.cargo ? "border-red-500 w-full" : "w-full"}
+                    />
+                  </FormControl>
+                  {errors.cargo && <FormMessage>{errors.cargo}</FormMessage>}
                 </FormItem>
               )}
             />

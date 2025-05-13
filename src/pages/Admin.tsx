@@ -529,10 +529,35 @@ export default function Admin() {
                 <label className="text-sm font-medium">Telefone</label>
                 <Input
                   value={formData.telefone || ""}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, telefone: e.target.value }))
-                  }
+                  onChange={(e) => {
+                    // Remove todos os caracteres não numéricos
+                    const numericValue = e.target.value.replace(/\D/g, '');
+                    
+                    // Limita a 11 dígitos (DDD + 9 dígitos para celular)
+                    const truncatedValue = numericValue.slice(0, 11);
+                    
+                    // Aplica a máscara (00) 00000-0000
+                    let formattedValue = '';
+                    if (truncatedValue.length > 0) {
+                      // Adiciona o DDD entre parênteses
+                      formattedValue = `(${truncatedValue.slice(0, 2)}`;
+                      
+                      if (truncatedValue.length > 2) {
+                        // Adiciona o fechamento do parênteses e espaço
+                        formattedValue += `) ${truncatedValue.slice(2, 7)}`;
+                        
+                        if (truncatedValue.length > 7) {
+                          // Adiciona o hífen e o restante dos números
+                          formattedValue += `-${truncatedValue.slice(7, 11)}`;
+                        }
+                      }
+                    }
+                    
+                    setFormData((prev) => ({ ...prev, telefone: formattedValue }));
+                  }}
+                  placeholder="(00) 00000-0000"
                   required
+                  maxLength={15} // Tamanho máximo com a máscara
                 />
               </div>
 

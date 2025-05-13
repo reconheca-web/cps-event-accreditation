@@ -5,6 +5,7 @@ export interface FormErrors {
   telefone?: string;
   tipoUnidade?: string;
   nomeUnidade?: string;
+  cargo?: string;
 }
 
 export const validateForm = (
@@ -14,6 +15,7 @@ export const validateForm = (
     telefone: string;
     tipoUnidade: string;
     nomeUnidade: string;
+    cargo: string;
   },
   existingEmails: string[],
   existingPhones: string[]
@@ -52,6 +54,8 @@ export const validateForm = (
   if (!values.nomeUnidade) {
     errors.nomeUnidade = "Nome da unidade é obrigatório";
   }
+
+  // Cargo não é obrigatório
 
   return errors;
 };
