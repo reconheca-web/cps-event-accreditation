@@ -20,16 +20,16 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onClose }) => {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-center text-xl font-bold text-cps-blue-dark">
-            Cadastro Realizado com Sucesso!
+            Inscrição Realizada com Sucesso!
           </DialogTitle>
         </DialogHeader>
         
         <div className="flex flex-col items-center text-center py-6">
           <CheckCircle className="h-16 w-16 text-green-500 mb-4" />
-          
+
           <p className="text-gray-700 mb-6">
-            Você receberá um QR Code via WhatsApp um dia antes do evento. 
-            Apresente-o na entrada para acesso ao evento.
+          Sua inscrição para o evento Encontro de Gestores CPS 2025 foi recebida com sucesso! 
+          Em breve, confirmaremos sua inscrição através do WhatsApp.
           </p>
           
           <Button 
