@@ -164,7 +164,13 @@ const Index = () => {
                     </div>
                     <Button 
                       className="bg-cps-wine text-white hover:bg-cps-wine/90 flex items-center justify-center w-full md:w-auto" 
-                      onClick={() => navigate("/info-evento")}
+                      onClick={() => {
+                        navigate("/info-evento");
+                        // Garante que a página seja rolada para o topo após a navegação
+                        setTimeout(() => {
+                          window.scrollTo(0, 0);
+                        }, 0);
+                      }}
                     >
                       Saiba mais
                       <ArrowRight className="h-4 w-4 ml-2" />
