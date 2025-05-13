@@ -393,33 +393,48 @@ const InfoEvento: React.FC = () => {
                         Aproveite sua estadia em São Paulo para descobrir os melhores atrativos turísticos, exposições, 
                         eventos culturais e experiências gastronômicas que a cidade tem a oferecer.
                       </p>
-                      <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-4">
-                        <div className="flex items-center gap-2 text-gray-700">
-                          <Coffee className="h-4 w-4 text-cps-wine" />
-                          <span>Gastronomia</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-700">
-                          <Utensils className="h-4 w-4 text-cps-wine" />
-                          <span>Restaurantes</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-700">
-                          <Trees className="h-4 w-4 text-cps-wine" />
-                          <span>Parques</span>
-                        </div>
-                      </div>
-                      <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-                        <div className="flex items-center gap-2 text-gray-700">
-                          <Building2 className="h-4 w-4 text-cps-wine" />
-                          <span>Museus</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-700">
-                          <Theater className="h-4 w-4 text-cps-wine" />
-                          <span>Teatros</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-700">
-                          <Route className="h-4 w-4 text-cps-wine" />
-                          <span>Roteiros</span>
-                        </div>
+                      
+                      <div className="grid grid-cols-4 gap-3 mb-6">
+                        <a href="https://www.reconhecasaopaulo.com.br/blog/categories/gastronomia-paulistana" target="_blank" rel="noopener noreferrer" 
+                           className="flex flex-col items-center p-3 rounded-lg bg-gray-50 hover:bg-cps-wine/10 transition-colors group">
+                          <Coffee className="h-8 w-8 text-cps-wine group-hover:scale-110 transition-transform mb-2" />
+                          <span className="text-gray-700 text-sm font-medium text-center">Gastronomia</span>
+                        </a>
+                        <a href="https://www.reconhecasaopaulo.com.br/blog/categories/roteiros-hist%C3%B3ricos-tur%C3%ADsticos" target="_blank" rel="noopener noreferrer" 
+                           className="flex flex-col items-center p-3 rounded-lg bg-gray-50 hover:bg-cps-wine/10 transition-colors group">
+                          <Building2 className="h-8 w-8 text-cps-wine group-hover:scale-110 transition-transform mb-2" />
+                          <span className="text-gray-700 text-sm font-medium text-center">Museus</span>
+                        </a>
+                        <a href="https://www.reconhecasaopaulo.com.br/blog/categories/natureza-parques-afins" target="_blank" rel="noopener noreferrer" 
+                           className="flex flex-col items-center p-3 rounded-lg bg-gray-50 hover:bg-cps-wine/10 transition-colors group">
+                          <Trees className="h-8 w-8 text-cps-wine group-hover:scale-110 transition-transform mb-2" />
+                          <span className="text-gray-700 text-sm font-medium text-center">Parques</span>
+                        </a>
+                        <a href="https://www.reconhecasaopaulo.com.br/blog/categories/roteiros-hist%C3%B3ricos-tur%C3%ADsticos" target="_blank" rel="noopener noreferrer" 
+                           className="flex flex-col items-center p-3 rounded-lg bg-gray-50 hover:bg-cps-wine/10 transition-colors group">
+                          <MapPin className="h-8 w-8 text-cps-wine group-hover:scale-110 transition-transform mb-2" />
+                          <span className="text-gray-700 text-sm font-medium text-center">Pontos Turísticos</span>
+                        </a>
+                        <a href="https://www.reconhecasaopaulo.com.br/blog/categories/shows-e-concertos-em-sao-paulo" target="_blank" rel="noopener noreferrer" 
+                           className="flex flex-col items-center p-3 rounded-lg bg-gray-50 hover:bg-cps-wine/10 transition-colors group">
+                          <Theater className="h-8 w-8 text-cps-wine group-hover:scale-110 transition-transform mb-2" />
+                          <span className="text-gray-700 text-sm font-medium text-center">Teatros</span>
+                        </a>
+                        <a href="https://www.reconhecasaopaulo.com.br/blog/categories/roteiros-hist%C3%B3ricos-tur%C3%ADsticos" target="_blank" rel="noopener noreferrer" 
+                           className="flex flex-col items-center p-3 rounded-lg bg-gray-50 hover:bg-cps-wine/10 transition-colors group">
+                          <Route className="h-8 w-8 text-cps-wine group-hover:scale-110 transition-transform mb-2" />
+                          <span className="text-gray-700 text-sm font-medium text-center">Roteiros Temáticos</span>
+                        </a>
+                        <a href="https://www.reconhecasaopaulo.com.br/blog/categories/planeje-sua-viagem" target="_blank" rel="noopener noreferrer" 
+                           className="flex flex-col items-center p-3 rounded-lg bg-gray-50 hover:bg-cps-wine/10 transition-colors group">
+                          <Plane className="h-8 w-8 text-cps-wine group-hover:scale-110 transition-transform mb-2" />
+                          <span className="text-gray-700 text-sm font-medium text-center">Viagens</span>
+                        </a>
+                        <a href="https://www.reconhecasaopaulo.com.br/blog/categories/festivais_e_feiras" target="_blank" rel="noopener noreferrer" 
+                           className="flex flex-col items-center p-3 rounded-lg bg-gray-50 hover:bg-cps-wine/10 transition-colors group">
+                          <CalendarDays className="h-8 w-8 text-cps-wine group-hover:scale-110 transition-transform mb-2" />
+                          <span className="text-gray-700 text-sm font-medium text-center">Eventos</span>
+                        </a>
                       </div>
                     </div>
                     
