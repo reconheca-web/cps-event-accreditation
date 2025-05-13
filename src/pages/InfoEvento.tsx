@@ -339,6 +339,21 @@ const InfoEvento: React.FC = () => {
               </div>
             </div>
             
+            {/* Seção de Shoppings */}
+            <div className="mb-12">
+              <div className="bg-gray-100 p-4 rounded-lg mb-6">
+                <h3 className="text-xl font-bold text-cps-blue-dark flex items-center">
+                  <ShoppingBag className="h-5 w-5 mr-2 text-cps-wine" />
+                  Shoppings
+                </h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {shoppings.map((estabelecimento, index) => (
+                  <EstabelecimentoCard key={`shopping-${index}`} {...estabelecimento} />
+                ))}
+              </div>
+            </div>
+            
             {/* Seção de Farmácias */}
             <div className="mb-12">
               <div className="bg-gray-100 p-4 rounded-lg mb-6">
