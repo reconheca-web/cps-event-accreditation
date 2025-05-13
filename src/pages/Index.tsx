@@ -48,30 +48,30 @@ const Index = () => {
               
               {/* Event Image Column */}
               <div className="flex flex-col justify-center">
-                <div className="rounded-lg overflow-hidden shadow-lg h-64 md:h-96 flex items-center justify-center border border-gray-200/20 bg-gradient-to-br from-cps-blue-dark/90 to-cps-blue-dark/70">
-                  <div className="text-center text-white p-6 relative z-10 w-full">
+                <div className="rounded-lg overflow-hidden shadow-lg h-auto min-h-[16rem] md:h-96 flex items-center justify-center border border-gray-200/20 bg-gradient-to-br from-cps-blue-dark/90 to-cps-blue-dark/70">
+                  <div className="text-center text-white p-4 md:p-6 relative z-10 w-full">
                     {/* Elemento decorativo superior */}
-                    <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-white/40 rounded-tl-lg -mt-2 -ml-2"></div>
+                    <div className="absolute top-0 left-0 w-12 md:w-16 h-12 md:h-16 border-t-2 border-l-2 border-white/40 rounded-tl-lg -mt-2 -ml-2"></div>
                     
-                    <h3 className="text-2xl md:text-3xl font-bold mb-4 text-white drop-shadow-md">
+                    <h3 className="text-xl md:text-3xl font-bold mb-2 md:mb-4 text-white drop-shadow-md break-words px-2">
                       Encontro de Gestores CPS 2025
                     </h3>
                     
-                    <div className="w-24 h-1 bg-white mx-auto mb-4 rounded-full"></div>
+                    <div className="w-16 md:w-24 h-1 bg-white mx-auto mb-2 md:mb-4 rounded-full"></div>
                     
-                    <p className="text-lg md:text-xl font-light">
+                    <p className="text-base md:text-xl font-light px-2 break-words">
                       CPS: Onde Sonhos Ganham Vida e o Futuro é Criado
                     </p>
                     
                     {/* Elemento decorativo central */}
-                    <div className="w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent my-6"></div>
+                    <div className="w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent my-3 md:my-6"></div>
                     
-                    <div className="mt-4 text-cps-blue-light text-xl md:text-2xl font-semibold py-2 px-4 rounded-full inline-block shadow-inner bg-cps-blue-dark/50">
+                    <div className="mt-2 md:mt-4 text-cps-blue-light text-lg md:text-2xl font-semibold py-1 md:py-2 px-3 md:px-4 rounded-full inline-block shadow-inner bg-cps-blue-dark/50">
                       27 de maio de 2025
                     </div>
                     
                     {/* Elemento decorativo inferior */}
-                    <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-white/40 rounded-br-lg -mb-2 -mr-2"></div>
+                    <div className="absolute bottom-0 right-0 w-12 md:w-16 h-12 md:h-16 border-b-2 border-r-2 border-white/40 rounded-br-lg -mb-2 -mr-2"></div>
                   </div>
                 </div>
               </div>

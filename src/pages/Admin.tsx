@@ -292,6 +292,18 @@ export default function Admin() {
         </div>
 
         {/* Tabela de Inscritos */}
+        <div className="mb-6">
+          <div className="flex flex-col justify-center items-center mb-6 text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-cps-wine mb-3">
+              Tabela de Inscritos
+            </h2>
+            <div className="w-20 h-1 bg-cps-wine rounded-full mb-4"></div>
+            <p className="text-gray-700 max-w-2xl mx-auto">
+              Gerencie todos os participantes inscritos no evento
+            </p>
+          </div>
+        </div>
+        
         <div className="bg-white rounded-lg shadow-sm p-6 overflow-hidden">
           {/* Wrapper para scroll horizontal */}
           <div className="overflow-x-auto">
@@ -460,9 +472,12 @@ export default function Admin() {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>
-              {editingGuest ? "Editar Inscrição" : "Nova Inscrição"}
-            </DialogTitle>
+            <div className="flex flex-col justify-center items-center text-center">
+              <DialogTitle className="text-xl font-bold text-cps-wine">
+                {editingGuest ? "Editar Inscrição" : "Nova Inscrição"}
+              </DialogTitle>
+              <div className="w-16 h-1 bg-cps-wine rounded-full my-2"></div>
+            </div>
           </DialogHeader>
           <form
             onSubmit={async (e) => {
@@ -666,10 +681,15 @@ export default function Admin() {
             className="sm:max-w-md max-h-[90vh] overflow-y-auto"
           >
             <DialogHeader className="pb-2">
-              <DialogTitle className="text-xl font-bold text-cps-wine">Scanner de QR Code para Check-in</DialogTitle>
-              <p className="text-sm text-gray-500 mt-1">
-                Escaneie o QR Code do participante para registrar o check-in no evento
-              </p>
+              <div className="flex flex-col justify-center items-center text-center">
+                <DialogTitle className="text-xl font-bold text-cps-wine">
+                  Scanner de QR Code para Check-in
+                </DialogTitle>
+                <div className="w-16 h-1 bg-cps-wine rounded-full my-2"></div>
+                <p className="text-sm text-gray-500 mt-1">
+                  Escaneie o QR Code do participante para registrar o check-in no evento
+                </p>
+              </div>
             </DialogHeader>
             <QRCodeScanner onClose={handleCloseQRScanner} />
           </DialogContent>
