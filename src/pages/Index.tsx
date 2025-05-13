@@ -15,7 +15,7 @@ const Index = () => {
               {/* Title now on the left */}
               <div className="text-center md:text-left order-2 md:order-1">
                 <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold">
-                  Cadastro para o Evento CPS
+                Encontro de Gestores CPS 2025
                 </h1>
               </div>
               
