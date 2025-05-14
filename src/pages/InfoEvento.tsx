@@ -151,13 +151,13 @@ const estabelecimentos: EstabelecimentoProps[] = [
     icone: <ShoppingBag className="h-4 w-4 text-cps-wine" />
   },
   {
-    nome: "Shopping Moema",
-    tipo: "Shopping Center",
-    endereco: "Alameda dos Maracatins, 1435 – Moema, São Paulo – SP, 04089-015",
-    distancia: "Aproximadamente 1,2 km do local do evento",
-    avaliacao: 4.3,
-    avaliacoes: 1800,
-    preco: "$$",
+    nome: "Shopping Vila Olímpia",
+    tipo: "Centro comercial",
+    endereco: "Rua Olimpíadas, 360 – Vila Olímpia, São Paulo – SP, 04551-000",
+    distancia: "Aproximadamente 3,5 km do local do evento",
+    avaliacao: 4.4,
+    avaliacoes: 28000,
+    preco: "$$$",
 
 
     mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=Alameda+dos+Maracatins,+1435,+São+Paulo",

@@ -55,6 +55,7 @@ export default function Admin() {
     telefone: "",
     tipo_unidade: "",
     nome_unidade: "",
+    cargo: "",
     status_inscricao: "pendente" as StatusInscricao,
   });
   const [stats, setStats] = useState<DashboardStats>({ 
@@ -341,6 +342,7 @@ export default function Admin() {
                         telefone: "",
                         tipo_unidade: "",
                         nome_unidade: "",
+                        cargo: "",
                         status_inscricao: "pendente",
                       });
                       setIsModalOpen(true);
@@ -380,13 +382,14 @@ export default function Admin() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[18%]">Nome</TableHead>
-                  <TableHead className="w-[15%]">Email</TableHead>
-                  <TableHead className="w-[10%]">Telefone</TableHead>
-                  <TableHead className="w-[8%]">Tipo Unidade</TableHead>
-                  <TableHead className="w-[15%]">Nome Unidade</TableHead>
-                  <TableHead className="w-[8%]">Status</TableHead>
-                  <TableHead className="w-[8%]">Check-in</TableHead>
+                  <TableHead className="w-[16%]">Nome</TableHead>
+                  <TableHead className="w-[14%]">Email</TableHead>
+                  <TableHead className="w-[9%]">Telefone</TableHead>
+                  <TableHead className="w-[7%]">Tipo Unidade</TableHead>
+                  <TableHead className="w-[13%]">Nome Unidade</TableHead>
+                  <TableHead className="w-[9%]">Cargo</TableHead>
+                  <TableHead className="w-[7%]">Status</TableHead>
+                  <TableHead className="w-[7%]">Check-in</TableHead>
                   <TableHead className="w-[10%]">Data Inscrição</TableHead>
                   <TableHead className="w-[8%]">Ações</TableHead>
                 </TableRow>
@@ -399,6 +402,7 @@ export default function Admin() {
                     <TableCell className="whitespace-nowrap">{guest.telefone}</TableCell>
                     <TableCell className="whitespace-nowrap">{guest.tipo_unidade}</TableCell>
                     <TableCell className="truncate">{guest.nome_unidade}</TableCell>
+                    <TableCell className="truncate">{guest.cargo}</TableCell>
                     <TableCell>
                       <span className={`inline-flex px-2 py-1 rounded-full text-sm whitespace-nowrap ${
                         guest.status_inscricao === "aprovado"
@@ -643,6 +647,17 @@ export default function Admin() {
                     )}
                   </>
                 )}
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Cargo</label>
+                <Input
+                  value={formData.cargo || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, cargo: e.target.value }))
+                  }
+                  placeholder="Digite o cargo"
+                />
               </div>
             </div>
 
