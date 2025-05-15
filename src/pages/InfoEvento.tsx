@@ -160,7 +160,7 @@ const estabelecimentos: EstabelecimentoProps[] = [
     preco: "$$$",
 
 
-    mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=Alameda+dos+Maracatins,+1435,+São+Paulo",
+    mapsUrl: "https://www.google.com/maps/dir//R.+Olimp%C3%ADadas,+360+-+Vila+Ol%C3%ADmpia,+S%C3%A3o+Paulo+-+SP,+04551-000/@-23.5954307,-46.7689957,24839m/data=!3m1!1e3!4m8!4m7!1m0!1m5!1m1!1s0x94ce57489a61d431:0x2af73564d2bc7f20!2m2!1d-46.6865941!2d-23.5954524?entry=ttu&g_ep=EgoyMDI1MDUxMi4wIKXMDSoASAFQAw%3D%3D",
     categoria: "shopping",
     icone: <ShoppingBag className="h-4 w-4 text-cps-wine" />
   }

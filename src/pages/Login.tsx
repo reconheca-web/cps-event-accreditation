@@ -29,6 +29,7 @@ export default function Login() {
       toast({
         title: "Login realizado com sucesso!",
         description: "Redirecionando para o painel administrativo...",
+        duration: 1000,
       });
 
       navigate("/admin");

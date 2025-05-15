@@ -18,7 +18,7 @@ import {
 import { Button } from "../components/ui/button";
 import { useToast } from "../components/ui/use-toast";
 import { supabase } from "../lib/supabaseClient";
-import { UsersIcon, CheckCircleIcon, XCircleIcon, ClockIcon, PencilIcon, PlusIcon, QrCodeIcon } from 'lucide-react';
+import { UsersIcon, CheckCircleIcon, XCircleIcon, ClockIcon, PencilIcon, PlusIcon, QrCodeIcon, RefreshCwIcon } from 'lucide-react';
 import { Input } from "../components/ui/input";
 import {
   Dialog,
@@ -191,6 +191,78 @@ export default function Admin() {
     navigate("/login");
   };
 
+  // Função para atualizar apenas a tabela de inscritos sem recarregar a página
+  const handleRefreshData = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // Previne qualquer comportamento padrão que possa causar recarregamento
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
+    if (e && e.stopPropagation) {
+      e.stopPropagation();
+    }
+    
+    // Cria uma função local para buscar os dados sem afetar o estado global de loading
+    const atualizarDadosLocalmente = async () => {
+      // Indicador de carregamento local apenas para a tabela
+      const loadingToastId = toast({
+        title: "Atualizando dados...",
+        description: "Buscando os dados mais recentes...",
+        duration: 1000,
+      });
+      
+      try {
+        // Busca os dados diretamente do Supabase sem usar a função global
+        let query = supabase
+          .from("inscricoes_evento_cps")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (statusFilter !== "todos") {
+          query = query.eq("status_inscricao", statusFilter);
+        }
+
+        const { data, error } = await query;
+
+        if (error) throw error;
+
+        // Atualiza apenas os dados necessários sem recarregar a página
+        const inscricoes = data || [];
+        setGuests(inscricoes);
+
+        // Atualiza as estatísticas
+        const newStats: DashboardStats = {
+          total: inscricoes.length,
+          aprovados: inscricoes.filter(g => g.status_inscricao === 'aprovado').length,
+          rejeitados: inscricoes.filter(g => g.status_inscricao === 'rejeitado').length,
+          pendentes: inscricoes.filter(g => g.status_inscricao === 'pendente' || !g.status_inscricao).length,
+          checkins: inscricoes.filter(g => g.check_in !== null).length
+        };
+        setStats(newStats);
+        
+        // Notifica o usuário sobre o sucesso
+        toast({
+          title: "Dados atualizados",
+          description: "A lista de inscritos foi atualizada com sucesso.",
+          duration: 1500,
+        });
+      } catch (error: any) {
+        console.error("Erro ao atualizar dados:", error);
+        toast({
+          variant: "destructive",
+          title: "Erro ao atualizar",
+          description: error.message || "Não foi possível atualizar os dados.",
+          duration: 1500,
+        });
+      }
+    };
+    
+    // Executa a atualização sem afetar o estado global de loading
+    atualizarDadosLocalmente();
+    
+    // Retorna false para garantir que não haja comportamento padrão
+    return false;
+  };
+
   if (loading) {
     return <div className="p-8 text-center">Carregando...</div>;
   }
@@ -306,10 +378,10 @@ export default function Admin() {
         </div>
         
         <div className="bg-white rounded-lg shadow-sm p-6 overflow-hidden">
-          {/* Wrapper para scroll horizontal */}
-          <div className="overflow-x-auto">
-            {/* Container para manter largura mínima e evitar quebra */}
-            <div className="min-w-[1024px]">
+          {/* Wrapper para scroll horizontal com largura mínima para garantir rolagem */}
+          <div className="overflow-x-auto overflow-y-visible" style={{ WebkitOverflowScrolling: 'touch' }}>
+            {/* Container responsivo com largura mínima para forçar rolagem horizontal em telas pequenas */}
+            <div className="w-full min-w-[800px]">
 
           {/* Header Actions */}
           <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
@@ -364,6 +436,27 @@ export default function Admin() {
                     <QrCodeIcon className="mr-1 h-4 w-4" />
                     <span className="whitespace-nowrap text-sm">Check-in</span>
                   </Button>
+
+                  {/* Botão de Atualizar Registros */}
+                  <div 
+                    className="inline-block" 
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Button
+                      type="button"
+                      variant="default"
+                      onClick={handleRefreshData}
+                      className="bg-cps-wine hover:bg-cps-wine/90 w-auto"
+                      size="sm"
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        return false;
+                      }}
+                    >
+                      <RefreshCwIcon className="mr-1 h-4 w-4" />
+                      <span className="whitespace-nowrap text-sm">Atualizar</span>
+                    </Button>
+                  </div>
                 </>
               )}
               <Button 
@@ -378,31 +471,31 @@ export default function Admin() {
           </div>
 
           {/* Table */}
-          <div className="border rounded-lg overflow-x-auto">
+          <div className="border rounded-lg">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[16%]">Nome</TableHead>
-                  <TableHead className="w-[14%]">Email</TableHead>
-                  <TableHead className="w-[9%]">Telefone</TableHead>
-                  <TableHead className="w-[7%]">Tipo Unidade</TableHead>
-                  <TableHead className="w-[13%]">Nome Unidade</TableHead>
-                  <TableHead className="w-[9%]">Cargo</TableHead>
-                  <TableHead className="w-[7%]">Status</TableHead>
-                  <TableHead className="w-[7%]">Check-in</TableHead>
-                  <TableHead className="w-[10%]">Data Inscrição</TableHead>
-                  <TableHead className="w-[8%]">Ações</TableHead>
+                  <TableHead className="w-[15%]">Nome</TableHead>
+                  <TableHead className="w-[15%]">Email</TableHead>
+                  <TableHead className="w-[10%]">Telefone</TableHead>
+                  <TableHead className="w-[8%]">Tipo Unidade</TableHead>
+                  <TableHead className="w-[15%]">Nome Unidade</TableHead>
+                  <TableHead className="w-[12%]">Cargo</TableHead>
+                  <TableHead className="w-[10%]">Status</TableHead>
+                  <TableHead className="w-[10%]">Check-in</TableHead>
+                  <TableHead className="w-[15%]">Data de Inscrição</TableHead>
+                  <TableHead className="w-[15%] sticky right-0 bg-white">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {guests.map((guest) => (
                   <TableRow key={guest.id}>
-                    <TableCell className="truncate">{guest.nome_completo}</TableCell>
-                    <TableCell className="truncate">{guest.email}</TableCell>
+                    <TableCell className="truncate max-w-[150px]" title={guest.nome_completo}>{guest.nome_completo}</TableCell>
+                    <TableCell className="truncate max-w-[150px]" title={guest.email}>{guest.email}</TableCell>
                     <TableCell className="whitespace-nowrap">{guest.telefone}</TableCell>
                     <TableCell className="whitespace-nowrap">{guest.tipo_unidade}</TableCell>
-                    <TableCell className="truncate">{guest.nome_unidade}</TableCell>
-                    <TableCell className="truncate">{guest.cargo}</TableCell>
+                    <TableCell className="break-words" title={guest.nome_unidade}>{guest.nome_unidade}</TableCell>
+                    <TableCell className="break-words" title={guest.cargo}>{guest.cargo}</TableCell>
                     <TableCell>
                       <span className={`inline-flex px-2 py-1 rounded-full text-sm whitespace-nowrap ${
                         guest.status_inscricao === "aprovado"
@@ -428,14 +521,14 @@ export default function Admin() {
                     <TableCell className="whitespace-nowrap">
                       {guest.created_at ? new Date(guest.created_at).toLocaleDateString() : '-'}
                     </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2 whitespace-nowrap">
+                    <TableCell className="sticky right-0 bg-white">
+                      <div className="flex items-center gap-1 whitespace-nowrap">
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => updateGuestStatus(guest.id, "aprovado")}
                           disabled={guest.status_inscricao === "aprovado"}
-                          className="border-green-500 text-green-600 hover:bg-green-50 px-2 py-1 h-auto"
+                          className="border-green-500 text-green-600 hover:bg-green-50 px-1 py-1 h-auto text-xs"
                         >
                           Aceitar
                         </Button>
@@ -444,7 +537,7 @@ export default function Admin() {
                           variant="outline"
                           onClick={() => updateGuestStatus(guest.id, "rejeitado")}
                           disabled={guest.status_inscricao === "rejeitado"}
-                          className="border-red-500 text-red-600 hover:bg-red-50 px-2 py-1 h-auto"
+                          className="border-red-500 text-red-600 hover:bg-red-50 px-1 py-1 h-auto text-xs"
                         >
                           Rejeitar
                         </Button>
@@ -457,9 +550,9 @@ export default function Admin() {
                               setFormData(guest);
                               setIsModalOpen(true);
                             }}
-                            className="border-gray-500 text-gray-600 hover:bg-gray-50 px-2 py-1 h-auto"
+                            className="border-gray-500 text-gray-600 hover:bg-gray-50 px-1 py-1 h-auto"
                           >
-                            <PencilIcon className="h-4 w-4" />
+                            <PencilIcon className="h-3 w-3" />
                           </Button>
                         )}
                       </div>
@@ -601,14 +694,15 @@ export default function Admin() {
                   <SelectContent>
                     <SelectItem value="ETEC">ETEC</SelectItem>
                     <SelectItem value="FATEC">FATEC</SelectItem>
-                    <SelectItem value="Coordenadoria">Coordenadoria</SelectItem>
+                    <SelectItem value="Núcleo Regional">Núcleo Regional</SelectItem>
+                    <SelectItem value="Administração Central">Administração Central</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
                 <label className="text-sm font-medium">Nome da Unidade</label>
-                {formData.tipo_unidade === "Coordenadoria" ? (
+                {["Núcleo Regional", "Administração Central"].includes(formData.tipo_unidade) ? (
                   <Input
                     value={formData.nome_unidade || ""}
                     onChange={(e) =>
