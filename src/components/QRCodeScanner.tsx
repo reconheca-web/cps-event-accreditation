@@ -245,14 +245,14 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
         toast({
           title: "Check-in já realizado",
           description: `${checkData.nome_completo} já realizou o check-in anteriormente.`,
-          duration: 4000,
+          duration: 3000,
         });
         
         // Aguarda 2 segundos e reinicia o scanner em vez de fechar o modal
         setTimeout(() => {
           setLastCheckInResult(null);
           startScanner();
-        }, 2000);
+        }, 6000);
         return;
       }
       
