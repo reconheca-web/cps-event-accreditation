@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+import { setupPWAStartUrl } from '@/lib/pwaUtils';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -11,8 +12,33 @@ interface BeforeInstallPromptEvent extends Event {
 export function PWAInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstallable, setIsInstallable] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [isAndroid, setIsAndroid] = useState(false);
   const location = useLocation();
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  
+  // Detectar dispositivos móveis no momento da montagem do componente
+  useEffect(() => {
+    // Detectar se é um dispositivo móvel
+    const mobileDevice = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    setIsMobile(mobileDevice);
+    
+    // Detectar se é iOS
+    const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    setIsIOS(isIOSDevice);
+    
+    // Detectar se é Android
+    const isAndroidDevice = /Android/i.test(navigator.userAgent);
+    setIsAndroid(isAndroidDevice);
+    
+    // Para dispositivos móveis, já marca como instalável
+    if (mobileDevice) {
+      setIsInstallable(true);
+    }
+    
+    // Configurar a URL inicial do PWA
+    setupPWAStartUrl();
+  }, []);
   
   // Não mostrar o botão na página de login
   const isLoginPage = location.pathname === '/login';
@@ -37,44 +63,57 @@ export function PWAInstall() {
     };
   }, []);
 
-  // Efeito para Safari no iOS
-  useEffect(() => {
-    // Verificar se é Safari no iOS
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
-    
-    if (isIOS && isSafari && !isLoginPage) {
-      // No Safari iOS, não temos o evento beforeinstallprompt
-      // Então vamos mostrar o botão de instalação de qualquer forma
-      setIsInstallable(true);
-    }
-  }, [isLoginPage]);
+  // Remover o efeito específico para Safari no iOS, pois já estamos tratando isso no useEffect inicial
 
   const handleInstallClick = async () => {
+    // Verificar se temos o evento beforeinstallprompt disponível (Android/Chrome)
     if (deferredPrompt) {
-      // Para navegadores que suportam o evento beforeinstallprompt (Chrome, Edge, etc.)
-      deferredPrompt.prompt();
+      try {
+        // Para navegadores que suportam o evento beforeinstallprompt (Chrome, Edge, etc.)
+        deferredPrompt.prompt();
 
-      // Aguardar pela escolha do usuário
-      const { outcome } = await deferredPrompt.userChoice;
-      
-      // Limpar o prompt armazenado, pois ele não pode ser usado novamente
-      setDeferredPrompt(null);
-      
-      if (outcome === 'accepted') {
-        setIsInstallable(false);
-        console.log('Usuário aceitou a instalação do PWA');
-      } else {
-        console.log('Usuário recusou a instalação do PWA');
+        // Aguardar pela escolha do usuário
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        // Limpar o prompt armazenado, pois ele não pode ser usado novamente
+        setDeferredPrompt(null);
+        
+        if (outcome === 'accepted') {
+          setIsInstallable(false);
+          console.log('Usuário aceitou a instalação do PWA');
+        } else {
+          console.log('Usuário recusou a instalação do PWA');
+        }
+      } catch (error) {
+        console.error('Erro ao tentar instalar o PWA:', error);
+        mostrarInstrucoesInstalacao();
       }
-    } else if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-      // Para Safari no iOS, mostrar instruções de instalação
+      return;
+    }
+    
+    // Se não temos o evento beforeinstallprompt, mostrar instruções específicas para cada plataforma
+    mostrarInstrucoesInstalacao();
+  };
+  
+  // Função para mostrar instruções de instalação específicas para cada plataforma
+  const mostrarInstrucoesInstalacao = () => {
+    if (isIOS) {
+      // Instruções para iOS
       alert('Para instalar o aplicativo no iOS:\n\n1. Toque no ícone de compartilhamento (quadrado com seta para cima)\n2. Role para baixo e toque em "Adicionar à Tela de Início"\n3. Toque em "Adicionar" no canto superior direito');
+    } else if (isAndroid) {
+      // Instruções para Android
+      alert('Para instalar o aplicativo no Android:\n\n1. Toque no menu (três pontos) no canto superior direito\n2. Selecione "Instalar aplicativo" ou "Adicionar à tela inicial"');
+    } else {
+      // Instruções genéricas para outros dispositivos
+      alert('Para instalar este aplicativo:\n\n1. Abra o menu do seu navegador\n2. Procure a opção "Instalar aplicativo" ou "Adicionar à tela inicial"');
     }
   };
 
-  // Se não estiver na página admin ou não for um dispositivo móvel, não mostrar o botão
-  if (!shouldShowInstallButton && !isInstallable) return null;
+  // Verificar se deve mostrar o botão de instalação
+  // Mostrar o botão se:
+  // 1. Não estiver na página de login E
+  // 2. (Tiver um prompt de instalação disponível OU for um dispositivo iOS)
+  if (isLoginPage || (!isInstallable && !deferredPrompt && !isIOS)) return null;
 
   return (
     <Button 
