@@ -18,7 +18,7 @@ import {
 import { Button } from "../components/ui/button";
 import { useToast } from "../components/ui/use-toast";
 import { supabase } from "../lib/supabaseClient";
-import { UsersIcon, CheckCircleIcon, XCircleIcon, ClockIcon, PencilIcon, PlusIcon, QrCodeIcon, RefreshCwIcon } from 'lucide-react';
+import { UsersIcon, CheckCircleIcon, XCircleIcon, ClockIcon, PencilIcon, PlusIcon, QrCodeIcon, RefreshCwIcon, CheckIcon, AlertCircleIcon } from 'lucide-react';
 import { Input } from "../components/ui/input";
 import {
   Dialog,
@@ -154,6 +154,7 @@ export default function Admin() {
         variant: "destructive",
         title: "Erro ao carregar convidados",
         description: error.message,
+        
       });
     } finally {
       setLoading(false);
@@ -169,17 +170,27 @@ export default function Admin() {
 
       if (error) throw error;
 
+      // Toast super compacto com emoji
+      const statusEmoji = newStatus === "aprovado" ? "✅" : 
+                        newStatus === "rejeitado" ? "❌" : 
+                        newStatus === "check-in" ? "🔖" : "📝";
+      
       toast({
-        title: "Status atualizado",
-        description: `Convidado ${newStatus} com sucesso!`,
+        title: `${statusEmoji} ${newStatus}`,
+        description: undefined,
+        duration: 500,
+        className: "p-1.5 max-w-[140px] xs:max-w-[120px] text-center border-green-500 bg-green-50 dark:bg-green-900/20 text-sm ml-auto mr-2 sm:mr-4",
+        variant: "default",
       });
 
       fetchGuests();
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Erro ao atualizar status",
-        description: error.message,
+        title: "⚠️ Erro",
+        description: typeof error.message === 'string' ? error.message.substring(0, 30) : undefined,
+        className: "p-1.5 max-w-[140px] xs:max-w-[120px] text-sm ml-auto mr-2 sm:mr-4",
+        duration: 600,
       });
     }
   };
@@ -436,29 +447,30 @@ export default function Admin() {
                     <QrCodeIcon className="mr-1 h-4 w-4" />
                     <span className="whitespace-nowrap text-sm">Check-in</span>
                   </Button>
-
-                  {/* Botão de Atualizar Registros */}
-                  <div 
-                    className="inline-block" 
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Button
-                      type="button"
-                      variant="default"
-                      onClick={handleRefreshData}
-                      className="bg-cps-wine hover:bg-cps-wine/90 w-auto"
-                      size="sm"
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        return false;
-                      }}
-                    >
-                      <RefreshCwIcon className="mr-1 h-4 w-4" />
-                      <span className="whitespace-nowrap text-sm">Atualizar</span>
-                    </Button>
-                  </div>
                 </>
               )}
+              
+              {/* Botão de Atualizar Registros - Visível para todos os usuários */}
+              <div 
+                className="inline-block" 
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Button
+                  type="button"
+                  variant="default"
+                  onClick={handleRefreshData}
+                  className="bg-cps-wine hover:bg-cps-wine/90 w-auto"
+                  size="sm"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    return false;
+                  }}
+                >
+                  <RefreshCwIcon className="mr-1 h-4 w-4" />
+                  <span className="whitespace-nowrap text-sm">Atualizar</span>
+                </Button>
+              </div>
+              
               <Button 
                 variant="outline" 
                 onClick={handleLogout}

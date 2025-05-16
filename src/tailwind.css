@@ -1,8 +1,11 @@
 /* Este arquivo contém as diretivas do Tailwind CSS para o projeto */
+
 /* Importa os estilos base do Tailwind */
 @tailwind base;
+
 /* Importa os componentes do Tailwind */
 @tailwind components;
+
 /* Importa os utilitários do Tailwind */
 @tailwind utilities;
 
