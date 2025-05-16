@@ -5,7 +5,6 @@ import { toast } from "./ui/use-toast";
 import { supabase } from "../lib/supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { CameraIcon, XIcon, RefreshCwIcon, CheckCircleIcon, AlertCircleIcon, Download } from "lucide-react";
-import { PWAInstall } from "./PWAInstall";
 
 interface QRCodeScannerProps {
   onClose: () => void;
@@ -441,10 +440,7 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
           Fechar
         </Button>
         
-        {/* Botão de instalação do PWA */}
-        <div className="absolute bottom-4 right-4">
-          <PWAInstall />
-        </div>
+
       </div>
       
       {/* Instruções */}

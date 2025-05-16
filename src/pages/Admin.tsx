@@ -42,6 +42,8 @@ interface DashboardStats {
 
 export default function Admin() {
   const [guests, setGuests] = useState<Inscricao[]>([]);
+  const [filteredGuests, setFilteredGuests] = useState<Inscricao[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>("todos");
@@ -73,6 +75,28 @@ export default function Admin() {
     checkAuth();
     fetchGuests();
   }, [statusFilter, refreshKey]);
+  
+  // Efeito para filtrar os inscritos com base no termo de busca
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setFilteredGuests(guests);
+      return;
+    }
+    
+    const term = searchTerm.toLowerCase().trim();
+    const filtered = guests.filter(guest => {
+      return (
+        guest.nome_completo?.toLowerCase().includes(term) ||
+        guest.email?.toLowerCase().includes(term) ||
+        guest.telefone?.includes(term) ||
+        guest.tipo_unidade?.toLowerCase().includes(term) ||
+        guest.nome_unidade?.toLowerCase().includes(term) ||
+        guest.cargo?.toLowerCase().includes(term)
+      );
+    });
+    
+    setFilteredGuests(filtered);
+  }, [guests, searchTerm]);
   
   // Efeito para garantir que os dados sejam recarregados quando o modal é fechado
   useEffect(() => {
@@ -133,6 +157,7 @@ export default function Admin() {
 
       const inscricoes = data || [];
       setGuests(inscricoes);
+      setFilteredGuests(inscricoes); // Define os inscritos filtrados inicialmente como todos os inscritos
 
       // Calcular estatísticas
       const newStats: DashboardStats = {
@@ -391,7 +416,7 @@ export default function Admin() {
 
           {/* Header Actions */}
           <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
-            <div className="flex items-center gap-4 w-full md:w-auto">
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-4 w-full md:w-auto">
               <Select
                 value={statusFilter}
                 onValueChange={setStatusFilter}
@@ -406,6 +431,50 @@ export default function Admin() {
                   <SelectItem value="rejeitado">Rejeitado</SelectItem>
                 </SelectContent>
               </Select>
+              
+              <div className="relative w-full md:w-[280px]">
+                <Input
+                  type="text"
+                  placeholder="Buscar por nome, email, telefone..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9 w-full"
+                />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500"
+                >
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                {searchTerm && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchTerm("")}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="h-4 w-4"
+                    >
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                )}
+              </div>
             </div>
             <div className="flex gap-2 justify-start md:justify-end w-full md:w-auto">
               {isAuthorized && (
@@ -495,7 +564,36 @@ export default function Admin() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {guests.map((guest) => (
+                {filteredGuests.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={10} className="text-center py-8 text-gray-500">
+                      {searchTerm ? (
+                        <>
+                          <div className="flex flex-col items-center justify-center gap-2">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="h-10 w-10 text-gray-400"
+                            >
+                              <circle cx="11" cy="11" r="8"></circle>
+                              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <p className="font-medium">Nenhum resultado encontrado para "{searchTerm}"</p>
+                            <p className="text-sm">Tente outro termo de busca ou limpe o filtro</p>
+                          </div>
+                        </>
+                      ) : (
+                        "Nenhum inscrito encontrado"
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredGuests.map((guest) => (
                   <TableRow key={guest.id}>
                     <TableCell className="truncate max-w-[150px]" title={guest.nome_completo}>{guest.nome_completo}</TableCell>
                     <TableCell className="truncate max-w-[150px]" title={guest.email}>{guest.email}</TableCell>
@@ -565,7 +663,8 @@ export default function Admin() {
                       </div>
                     </TableCell>
                   </TableRow>
-                ))}
+                ))
+                )}
               </TableBody>
             </Table>
           </div>
