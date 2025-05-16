@@ -245,6 +245,7 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
         toast({
           title: "Check-in já realizado",
           description: `${checkData.nome_completo} já realizou o check-in anteriormente.`,
+          duration: 4000,
         });
         
         // Aguarda 2 segundos para exibir o resultado antes de fechar
@@ -280,6 +281,7 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
         toast({
           title: "Check-in realizado com sucesso!",
           description: `Check-in de ${data[0].nome_completo} confirmado.`,
+          duration: 4000,
         });
         
         // Aguarda 2 segundos para exibir o resultado antes de fechar
