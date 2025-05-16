@@ -248,13 +248,10 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
           duration: 4000,
         });
         
-        // Aguarda 2 segundos para exibir o resultado antes de fechar
+        // Aguarda 2 segundos e reinicia o scanner em vez de fechar o modal
         setTimeout(() => {
-          if (window.location.pathname !== "/admin") {
-            navigate("/admin");
-          } else {
-            onClose();
-          }
+          setLastCheckInResult(null);
+          startScanner();
         }, 2000);
         return;
       }
@@ -284,15 +281,10 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
           duration: 4000,
         });
         
-        // Aguarda 2 segundos para exibir o resultado antes de fechar
+        // Aguarda 2 segundos e reinicia o scanner em vez de fechar o modal
         setTimeout(() => {
-          // Garantimos que estamos na rota /admin antes de fechar o modal
-          // Usamos o hook de navegação do React Router para evitar problemas de renderização
-          if (window.location.pathname !== "/admin") {
-            navigate("/admin");
-          } else {
-            onClose();
-          }
+          setLastCheckInResult(null);
+          startScanner();
         }, 2000);
       } else {
         setLastCheckInResult({
@@ -369,7 +361,7 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
                 {lastCheckInResult.nome && (
                   <p className="text-green-600 mt-2 text-lg">{lastCheckInResult.nome}</p>
                 )}
-                <p className="text-sm text-green-600 mt-4">Retornando à tela principal...</p>
+                <p className="text-sm text-green-600 mt-4">Preparando para novo check-in...</p>
               </>
             ) : (
               <>

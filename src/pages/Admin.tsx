@@ -114,11 +114,6 @@ export default function Admin() {
     
     // Força uma re-renderização do componente para evitar a tela branca
     setRefreshKey(prevKey => prevKey + 1);
-    
-    // Garantimos que estamos na rota /admin
-    if (window.location.pathname !== "/admin") {
-      navigate("/admin");
-    }
   };
 
   const fetchGuests = async () => {
@@ -783,7 +778,7 @@ export default function Admin() {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog para o Scanner de QR Code - Implementação robusta para evitar tela branca */}
+      {/* Dialog para o Scanner de QR Code - Implementação robusta para múltiplos check-ins consecutivos */}
       {isQRScannerOpen && (
         <Dialog 
           open={isQRScannerOpen} 
