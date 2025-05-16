@@ -18,15 +18,19 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <div className="fixed bottom-4 right-4 z-50">
-        <PWAInstall />
-      </div>
       <PWAUpdateNotification updateSW={updateSW} />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin" element={
+            <>
+              <Admin />
+              <div className="fixed bottom-4 right-4 z-50">
+                <PWAInstall />
+              </div>
+            </>
+          } />
           <Route path="/info-evento" element={<InfoEvento />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
