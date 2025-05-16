@@ -12,11 +12,13 @@ export function PWAInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstallable, setIsInstallable] = useState(false);
   const location = useLocation();
-  const isAdminPage = location.pathname === '/admin';
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-  // Forçar a exibição do botão na página /admin em dispositivos móveis
-  const shouldShowInstallButton = isAdminPage && isMobile;
+  
+  // Não mostrar o botão na página de login
+  const isLoginPage = location.pathname === '/login';
+  
+  // Forçar a exibição do botão em dispositivos móveis, exceto na página de login
+  const shouldShowInstallButton = !isLoginPage && isMobile;
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -41,12 +43,12 @@ export function PWAInstall() {
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
     
-    if (isIOS && isSafari && isAdminPage) {
+    if (isIOS && isSafari && !isLoginPage) {
       // No Safari iOS, não temos o evento beforeinstallprompt
       // Então vamos mostrar o botão de instalação de qualquer forma
       setIsInstallable(true);
     }
-  }, [isAdminPage]);
+  }, [isLoginPage]);
 
   const handleInstallClick = async () => {
     if (deferredPrompt) {
