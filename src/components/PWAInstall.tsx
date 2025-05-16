@@ -78,11 +78,11 @@ export function PWAInstall() {
     <Button 
       onClick={handleInstallClick} 
       variant="outline" 
-      size="sm" 
-      className="flex items-center gap-2 bg-cps-wine text-white hover:bg-cps-wine/90 hover:text-white"
+      size="icon" 
+      className="bg-cps-wine text-white hover:bg-cps-wine/90 hover:text-white rounded-full w-10 h-10 flex items-center justify-center" 
+      title="Instalar App"
     >
       <Download size={16} />
-      Instalar App
     </Button>
   );
 }

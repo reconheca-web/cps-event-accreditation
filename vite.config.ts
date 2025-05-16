@@ -92,7 +92,7 @@ export default defineConfig(({ mode }) => ({
             purpose: 'maskable'
           }
         ],
-        start_url: '/',
+        start_url: '/admin',
         display: 'standalone',
         orientation: 'portrait'
       }
