@@ -92,7 +92,7 @@ export default defineConfig(({ mode }) => ({
             purpose: 'maskable'
           }
         ],
-        start_url: '?source=pwa',
+        start_url: './?source=pwa',
         display: 'standalone',
         orientation: 'portrait'
       }

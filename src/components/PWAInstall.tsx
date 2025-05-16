@@ -37,6 +37,8 @@ export function PWAInstall() {
     }
     
     // Configurar a URL inicial do PWA
+    // Chamamos essa função aqui para garantir que a URL seja configurada
+    // mesmo que o usuário não clique no botão de instalação
     setupPWAStartUrl();
   }, []);
   
@@ -66,9 +68,24 @@ export function PWAInstall() {
   // Remover o efeito específico para Safari no iOS, pois já estamos tratando isso no useEffect inicial
 
   const handleInstallClick = async () => {
+    // Garantir que a URL inicial seja configurada antes da instalação
+    setupPWAStartUrl();
+    
     // Verificar se temos o evento beforeinstallprompt disponível (Android/Chrome)
     if (deferredPrompt) {
       try {
+        // Registrar a URL atual antes de mostrar o prompt
+        const currentPath = window.location.pathname;
+        const searchParams = new URLSearchParams(window.location.search);
+        searchParams.delete('source'); // Remover o parâmetro source se existir
+        
+        const queryString = searchParams.toString();
+        const fullPath = currentPath + (queryString ? `?${queryString}` : '');
+        
+        // Armazenar a URL atual no localStorage
+        localStorage.setItem('pwa_start_url', fullPath);
+        console.log('PWA start URL configurada antes da instalação:', fullPath);
+        
         // Para navegadores que suportam o evento beforeinstallprompt (Chrome, Edge, etc.)
         deferredPrompt.prompt();
 
@@ -81,6 +98,9 @@ export function PWAInstall() {
         if (outcome === 'accepted') {
           setIsInstallable(false);
           console.log('Usuário aceitou a instalação do PWA');
+          // Garantir que a URL inicial esteja corretamente configurada após a instalação
+          localStorage.setItem('pwa_start_url', fullPath);
+          console.log('PWA start URL confirmada após instalação:', fullPath);
         } else {
           console.log('Usuário recusou a instalação do PWA');
         }
