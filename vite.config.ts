@@ -47,10 +47,18 @@ export default defineConfig(({ mode }) => ({
                 statuses: [0, 200]
               }
             }
+          },
+          {
+            urlPattern: ({ request }) => request.mode === 'navigate',
+            handler: 'NetworkOnly',
+            options: {
+              precacheFallback: {
+                fallbackURL: '/offline.html'
+              }
+            }
           }
         ],
-        navigationPreload: true,
-        navigateFallback: '/offline.html'
+        navigationPreload: true
       },
       manifest: {
         name: 'CPS Event Accreditation',
