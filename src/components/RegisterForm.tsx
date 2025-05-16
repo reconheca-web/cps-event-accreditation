@@ -404,7 +404,7 @@ const RegisterForm: React.FC = () => {
                   <FormLabel className="text-gray-700">Cargo</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="Digite seu cargo (opcional)" 
+                      placeholder="Digite seu cargo" 
                       {...field} 
                       className={errors.cargo ? "border-red-500 w-full" : "w-full"}
                     />

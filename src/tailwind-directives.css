@@ -1,0 +1,16 @@
+/* Este arquivo contém definições para ajudar o editor a reconhecer as diretivas do Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Definições de base */
+}
+
+@layer components {
+  /* Definições de componentes */
+}
+
+@layer utilities {
+  /* Definições de utilitários */
+}

@@ -1,0 +1,22 @@
+/* Este arquivo contém as diretivas do Tailwind CSS para o projeto */
+/* Importa os estilos base do Tailwind */
+@tailwind base;
+/* Importa os componentes do Tailwind */
+@tailwind components;
+/* Importa os utilitários do Tailwind */
+@tailwind utilities;
+
+/* Camada de estilos base */
+@layer base {
+  /* Definições de base */
+}
+
+/* Camada de componentes personalizados */
+@layer components {
+  /* Definições de componentes */
+}
+
+/* Camada de utilitários personalizados */
+@layer utilities {
+  /* Definições de utilitários */
+}
