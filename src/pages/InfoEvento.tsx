@@ -20,7 +20,7 @@ interface EstabelecimentoProps {
 }
 
 const estabelecimentos: EstabelecimentoProps[] = [
-  // Restaurantes
+  // Restaurantes (ordenados por proximidade)
   {
     nome: "General Prime Steak & Burger – Moema",
     tipo: "Hamburgueria e Steakhouse",
@@ -63,16 +63,16 @@ const estabelecimentos: EstabelecimentoProps[] = [
     icone: <UtensilsCrossed className="h-4 w-4 text-cps-wine" />
   },
   {
-    nome: "Don Pepe Di Napoli",
-    tipo: "Italiana",
-    endereco: "Alameda dos Arapanés, 955 – Moema, São Paulo – SP, 04524-001",
-    distancia: "Aproximadamente 1,2 km do local do evento",
-    avaliacao: 4.5,
-    avaliacoes: 1200,
+    nome: "Rizz Restaurante - Moema",
+    tipo: "Brasileira",
+    endereco: "Alameda Iraé, 398 – Indianópolis, São Paulo – SP, 04075-000",
+    distancia: "Aproximadamente 300 metros do local do evento",
+    avaliacao: 4.2,
+    avaliacoes: 500,
     preco: "$$",
 
 
-    mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=Alameda+dos+Arapanés,+955,+São+Paulo",
+    mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=Alameda+Iraé,+398,+São+Paulo",
     categoria: "restaurante",
     icone: <UtensilsCrossed className="h-4 w-4 text-cps-wine" />
   },
@@ -91,16 +91,16 @@ const estabelecimentos: EstabelecimentoProps[] = [
     icone: <UtensilsCrossed className="h-4 w-4 text-cps-wine" />
   },
   {
-    nome: "Rizz Restaurante - Moema",
-    tipo: "Brasileira",
-    endereco: "Alameda Iraé, 398 – Indianópolis, São Paulo – SP, 04075-000",
-    distancia: "Aproximadamente 300 metros do local do evento",
-    avaliacao: 4.2,
-    avaliacoes: 500,
+    nome: "Don Pepe Di Napoli",
+    tipo: "Italiana",
+    endereco: "Alameda dos Arapanés, 955 – Moema, São Paulo – SP, 04524-001",
+    distancia: "Aproximadamente 1,2 km do local do evento",
+    avaliacao: 4.5,
+    avaliacoes: 1200,
     preco: "$$",
 
 
-    mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=Alameda+Iraé,+398,+São+Paulo",
+    mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=Alameda+dos+Arapanés,+955,+São+Paulo",
     categoria: "restaurante",
     icone: <UtensilsCrossed className="h-4 w-4 text-cps-wine" />
   },
@@ -109,28 +109,42 @@ const estabelecimentos: EstabelecimentoProps[] = [
   {
     nome: "Drogaria São Paulo",
     tipo: "Farmácia de rede",
-    endereco: "Avenida Moema, 300 – Moema, São Paulo – SP, 04077-020",
+    endereco: "Avenida Moema, 321-331 – Moema, São Paulo – SP, 04077-020",
     distancia: "Aproximadamente 400 metros do local do evento",
     avaliacao: 4.3,
     avaliacoes: 120,
     preco: "$$",
 
 
-    mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=Avenida+Moema,+300,+São+Paulo",
+    mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=Avenida+Moema,+321,+São+Paulo",
     categoria: "farmacia",
     icone: <Pill className="h-4 w-4 text-cps-wine" />
   },
   {
     nome: "Drogasil",
     tipo: "Farmácia de rede",
-    endereco: "Avenida Ibirapuera, 2000 – Moema, São Paulo – SP, 04028-001",
-    distancia: "Aproximadamente 600 metros do local do evento",
+    endereco: "Avenida Jurucê, 332-342 – Moema, São Paulo – SP, 04080-011",
+    distancia: "Aproximadamente 550 metros do local do evento",
     avaliacao: 4.2,
     avaliacoes: 95,
     preco: "$$",
 
 
-    mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=Avenida+Ibirapuera,+2000,+São+Paulo",
+    mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=Avenida+Jurucê,+332,+São+Paulo",
+    categoria: "farmacia",
+    icone: <Pill className="h-4 w-4 text-cps-wine" />
+  },
+  {
+    nome: "Droga Raia",
+    tipo: "Farmácia de rede",
+    endereco: "Avenida Moema, 370 – Moema, São Paulo – SP, 04077-021",
+    distancia: "Aproximadamente 450 metros do local do evento",
+    avaliacao: 4.4,
+    avaliacoes: 110,
+    preco: "$$",
+
+
+    mapsUrl: "https://maps.app.goo.gl/he4kGptb19HGsPcd6",
     categoria: "farmacia",
     icone: <Pill className="h-4 w-4 text-cps-wine" />
   },
