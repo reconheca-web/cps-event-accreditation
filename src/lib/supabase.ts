@@ -72,11 +72,12 @@ export async function criarInscricao(dados: {
   tipo_unidade: string;
   nome_unidade: string;
   cargo?: string;
+  aceite_termo: boolean;
 }) {
   try {
     // Validar dados localmente antes de enviar
-    if (!dados.nome_completo || !dados.email || !dados.telefone || !dados.tipo_unidade || !dados.nome_unidade) {
-      throw new Error('Todos os campos são obrigatórios');
+    if (!dados.nome_completo || !dados.email || !dados.telefone || !dados.tipo_unidade || !dados.nome_unidade || dados.aceite_termo !== true) {
+      throw new Error('Todos os campos são obrigatórios, incluindo o aceite dos termos');
     }
     
     // Preparar dados normalizados - apenas os campos necessários
@@ -86,7 +87,8 @@ export async function criarInscricao(dados: {
       telefone: dados.telefone.trim(),
       tipo_unidade: dados.tipo_unidade.trim(),
       nome_unidade: dados.nome_unidade.trim(),
-      cargo: dados.cargo ? dados.cargo.trim() : null
+      cargo: dados.cargo ? dados.cargo.trim() : null,
+      aceite_termo: dados.aceite_termo
       // Os campos enviado_qrcode, bloqueado_ia e status_inscricao terão seus valores padrão aplicados pelo banco
     };
     

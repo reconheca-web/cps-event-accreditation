@@ -182,40 +182,45 @@ export default function Admin() {
   };
 
   const updateGuestStatus = async (id: string, newStatus: string) => {
-    try {
-      const { error } = await supabase
-        .from("inscricoes_evento_cps")
-        .update({ status_inscricao: newStatus as StatusInscricao })
-        .eq("id", id);
-
-      if (error) throw error;
-
-      // Toast super compacto com emoji
-      const statusEmoji = newStatus === "aprovado" ? "✅" : 
-                        newStatus === "rejeitado" ? "❌" : 
-                        newStatus === "check-in" ? "🔖" : "📝";
-      
-      toast({
-        title: `${statusEmoji} ${newStatus}`,
-        description: undefined,
-        duration: 500,
-        className: "p-1.5 max-w-[140px] xs:max-w-[120px] text-center border-green-500 bg-green-50 dark:bg-green-900/20 text-sm ml-auto mr-2 sm:mr-4",
-        variant: "default",
-      });
-
-      fetchGuests();
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "⚠️ Erro",
-        description: typeof error.message === 'string' ? error.message.substring(0, 30) : undefined,
-        className: "p-1.5 max-w-[140px] xs:max-w-[120px] text-sm ml-auto mr-2 sm:mr-4",
-        duration: 600,
-      });
+  try {
+    console.log(`Atualizando status para ${newStatus} no ID: ${id}`);
+    
+    // Usar o cliente Supabase diretamente para atualizar apenas o status
+    const { error } = await supabase
+      .from("inscricoes_evento_cps")
+      .update({ status_inscricao: newStatus as StatusInscricao })
+      .eq("id", id);
+    
+    if (error) {
+      console.error('Erro ao atualizar status:', error);
+      throw error;
     }
-  };
-
-
+       
+    // Toast super compacto com emoji
+    const statusEmoji = newStatus === "aprovado" ? "✅" : 
+                      newStatus === "rejeitado" ? "❌" : 
+                      newStatus === "check-in" ? "🔖" : "📝";
+    
+    toast({
+      title: `${statusEmoji} ${newStatus}`,
+      description: undefined,
+      duration: 500,
+      className: "p-1.5 max-w-[140px] xs:max-w-[120px] text-center border-green-500 bg-green-50 dark:bg-green-900/20 text-sm ml-auto mr-2 sm:mr-4",
+      variant: "default",
+    });
+    
+    fetchGuests();
+  } catch (error: any) {
+    console.error('Erro ao atualizar status:', error);
+    toast({
+      variant: "destructive",
+      title: "⚠️ Erro",
+      description: typeof error.message === 'string' ? error.message.substring(0, 30) : undefined,
+      className: "p-1.5 max-w-[140px] xs:max-w-[120px] text-sm ml-auto mr-2 sm:mr-4",
+      duration: 600,
+    });
+  }
+};
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -595,8 +600,8 @@ export default function Admin() {
                 ) : (
                   filteredGuests.map((guest) => (
                   <TableRow key={guest.id}>
-                    <TableCell className="truncate max-w-[150px]" title={guest.nome_completo}>{guest.nome_completo}</TableCell>
-                    <TableCell className="truncate max-w-[150px]" title={guest.email}>{guest.email}</TableCell>
+                    <TableCell className="break-words max-w-[150px]" title={guest.nome_completo}>{guest.nome_completo}</TableCell>
+                    <TableCell className="break-words max-w-[150px]" title={guest.email}>{guest.email}</TableCell>
                     <TableCell className="whitespace-nowrap">{guest.telefone}</TableCell>
                     <TableCell className="whitespace-nowrap">{guest.tipo_unidade}</TableCell>
                     <TableCell className="break-words" title={guest.nome_unidade}>{guest.nome_unidade}</TableCell>
@@ -623,7 +628,7 @@ export default function Admin() {
                         </span>
                       )}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap">
+                    <TableCell className="break-words">
                       {guest.created_at ? new Date(guest.created_at).toLocaleDateString() : '-'}
                     </TableCell>
                     <TableCell className="sticky right-0 bg-white">

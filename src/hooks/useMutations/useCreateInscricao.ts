@@ -18,7 +18,8 @@ export function useCreateInscricao() {
           telefone: inscricao.telefone,
           tipo_unidade: inscricao.tipo_unidade,
           nome_unidade: inscricao.nome_unidade,
-          cargo: inscricao.cargo
+          cargo: inscricao.cargo,
+          aceite_termo: inscricao.aceite_termo
         });
         
         return resultado;

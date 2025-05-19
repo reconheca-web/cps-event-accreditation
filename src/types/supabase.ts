@@ -24,6 +24,7 @@ export interface InscricaoInput {
   tipo_unidade: string;
   nome_unidade: string;
   cargo?: string;
+  aceite_termo: boolean;
 }
 
 export interface Database {

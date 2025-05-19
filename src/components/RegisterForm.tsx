@@ -6,7 +6,8 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage 
+  FormMessage,
+  FormDescription
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { 
@@ -17,6 +18,7 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronDown } from "lucide-react";
 
 import { useForm } from "react-hook-form";
@@ -34,6 +36,7 @@ interface FormValues {
   tipoUnidade: string;
   nomeUnidade: string;
   cargo: string;
+  aceiteTermo: boolean;
 }
 
 // Mock database of existing emails and phones for validation
@@ -64,6 +67,7 @@ const RegisterForm: React.FC = () => {
       tipoUnidade: "",
       nomeUnidade: "",
       cargo: "",
+      aceiteTermo: false,
     }
   });
   
@@ -109,6 +113,11 @@ const RegisterForm: React.FC = () => {
     // Validate the form data localmente
     const validationErrors = validateForm(data, EXISTING_EMAILS, EXISTING_PHONES);
     
+    // Validar o aceite dos termos
+    if (!data.aceiteTermo) {
+      validationErrors.aceiteTermo = "É necessário aceitar os termos para prosseguir";
+    }
+    
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       
@@ -132,7 +141,8 @@ const RegisterForm: React.FC = () => {
       telefone: data.telefone,
       tipo_unidade: data.tipoUnidade,
       nome_unidade: data.nomeUnidade,
-      cargo: data.cargo
+      cargo: data.cargo,
+      aceite_termo: data.aceiteTermo
     };
     
     // Enviar dados para o Supabase via mutation
@@ -413,6 +423,28 @@ const RegisterForm: React.FC = () => {
                 </FormItem>
               )}
             />
+            
+            <FormField
+              control={form.control}
+              name="aceiteTermo"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 mb-4 p-2 border rounded-md bg-gray-50">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      className={errors.aceiteTermo ? "border-red-500" : ""}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormDescription className="text-sm text-gray-700">
+                      Autorizo, de forma livre e informada, o tratamento dos meus dados pessoais (nome, telefone, e-mail, tipo de unidade [ETEC ou FATEC], nome da unidade e cargo) para fins exclusivos de cadastro e organização do evento. Estou ciente de que os dados poderão ser compartilhados apenas com instituições integrantes do Centro Paula Souza e poderão permanecer armazenados para fins de controle de participação. Após o cumprimento da finalidade e inexistindo obrigação legal ou necessidade de preservação, os dados serão excluídos, conforme a Política de Privacidade e a Lei Geral de Proteção de Dados (Lei nº 13.709/2018).
+                    </FormDescription>
+                  </div>
+                </FormItem>
+              )}
+            />
+            {errors.aceiteTermo && <FormMessage className="text-red-500 mb-4">{errors.aceiteTermo}</FormMessage>}
             
             <Button 
               type="submit" 

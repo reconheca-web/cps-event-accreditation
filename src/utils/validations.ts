@@ -6,6 +6,7 @@ export interface FormErrors {
   tipoUnidade?: string;
   nomeUnidade?: string;
   cargo?: string;
+  aceiteTermo?: string;
 }
 
 export const validateForm = (
@@ -16,6 +17,7 @@ export const validateForm = (
     tipoUnidade: string;
     nomeUnidade: string;
     cargo: string;
+    aceiteTermo?: boolean;
   },
   existingEmails: string[],
   existingPhones: string[]
