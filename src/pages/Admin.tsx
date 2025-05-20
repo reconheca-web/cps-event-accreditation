@@ -18,7 +18,7 @@ import {
 import { Button } from "../components/ui/button";
 import { useToast } from "../components/ui/use-toast";
 import { supabase } from "../lib/supabaseClient";
-import { UsersIcon, CheckCircleIcon, XCircleIcon, ClockIcon, PencilIcon, PlusIcon, QrCodeIcon, RefreshCwIcon, CheckIcon, AlertCircleIcon } from 'lucide-react';
+import { UsersIcon, CheckCircleIcon, XCircleIcon, ClockIcon, PencilIcon, PlusIcon, QrCodeIcon, RefreshCwIcon, CheckIcon, AlertCircleIcon, DownloadIcon } from 'lucide-react';
 import { Input } from "../components/ui/input";
 import {
   Dialog,
@@ -298,6 +298,80 @@ export default function Admin() {
     // Retorna false para garantir que não haja comportamento padrão
     return false;
   };
+  
+  // Função para exportar os dados para CSV
+  const exportToCSV = () => {
+    try {
+      // Define os cabeçalhos do CSV
+      const headers = [
+        "Nome Completo",
+        "Email",
+        "Telefone",
+        "Tipo de Unidade",
+        "Nome da Unidade",
+        "Cargo",
+        "Status",
+        "Check-in",
+        "Data de Inscrição"
+      ];
+      
+      // Formata os dados para CSV
+      const csvData = filteredGuests.map(guest => [
+        guest.nome_completo || "",
+        guest.email || "",
+        guest.telefone || "",
+        guest.tipo_unidade || "",
+        guest.nome_unidade || "",
+        guest.cargo || "",
+        guest.status_inscricao || "pendente",
+        guest.check_in ? "Sim" : "Não",
+        guest.created_at ? new Date(guest.created_at).toLocaleString('pt-BR') : ""
+      ]);
+      
+      // Adiciona os cabeçalhos ao início dos dados
+      csvData.unshift(headers);
+      
+      // Converte os dados para formato CSV
+      const csvContent = csvData.map(row => row.map(cell => 
+        // Escapa aspas duplas e envolve células com aspas se contiverem vírgulas ou aspas
+        `"${String(cell).replace(/"/g, '""')}"`
+      ).join(',')).join('\n');
+      
+      // Cria um blob com os dados CSV
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      
+      // Cria um URL para o blob
+      const url = URL.createObjectURL(blob);
+      
+      // Cria um elemento de link para download
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Define o nome do arquivo com data atual
+      const date = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+      link.download = `inscritos-evento-cps-${date}.csv`;
+      
+      // Adiciona o link ao documento, clica nele e depois remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Libera o URL do objeto
+      URL.revokeObjectURL(url);
+      
+      toast({
+        title: "Download iniciado",
+        description: "O arquivo CSV com os dados dos inscritos está sendo baixado.",
+        duration: 3000,
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao exportar dados",
+        description: error.message,
+      });
+    }
+  };
 
   if (loading) {
     return <div className="p-8 text-center">Carregando...</div>;
@@ -404,7 +478,7 @@ export default function Admin() {
         <div className="mb-6">
           <div className="flex flex-col justify-center items-center mb-6 text-center">
             <h2 className="text-2xl md:text-3xl font-bold text-cps-wine mb-3">
-              Tabela de Inscritos
+              Inscritos
             </h2>
             <div className="w-20 h-1 bg-cps-wine rounded-full mb-4"></div>
             <p className="text-gray-700 max-w-2xl mx-auto">
@@ -540,6 +614,23 @@ export default function Admin() {
                 </Button>
               </div>
               
+              {/* Botão para exportar dados para CSV */}
+              <div 
+                className="inline-block" 
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Button
+                  type="button"
+                  variant="default"
+                  onClick={exportToCSV}
+                  className="bg-cps-wine hover:bg-cps-wine/90 w-auto"
+                  size="sm"
+                >
+                  <DownloadIcon className="mr-1 h-4 w-4" />
+                  <span className="whitespace-nowrap text-sm">Exportar CSV</span>
+                </Button>
+              </div>
+              
               <Button 
                 variant="outline" 
                 onClick={handleLogout}
@@ -651,20 +742,18 @@ export default function Admin() {
                         >
                           Rejeitar
                         </Button>
-                        {isAuthorized && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              setEditingGuest(guest);
-                              setFormData(guest);
-                              setIsModalOpen(true);
-                            }}
-                            className="border-gray-500 text-gray-600 hover:bg-gray-50 px-1 py-1 h-auto"
-                          >
-                            <PencilIcon className="h-3 w-3" />
-                          </Button>
-                        )}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setEditingGuest(guest);
+                            setFormData(guest);
+                            setIsModalOpen(true);
+                          }}
+                          className="border-gray-500 text-gray-600 hover:bg-gray-50 px-1 py-1 h-auto"
+                        >
+                          <PencilIcon className="h-3 w-3" />
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
