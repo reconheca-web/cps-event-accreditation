@@ -208,18 +208,17 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
       }
       
       // Primeiro, verifica se o usuário já realizou check-in
-      const { data: checkData, error: checkError } = await supabase
+      const { data: checkDataArray, error: checkError } = await supabase
         .from("inscricoes_evento_cps")
         .select("nome_completo, check_in")
-        .eq("id", decodedText)
-        .single();
+        .eq("id", decodedText);
       
       if (checkError) {
         throw checkError;
       }
       
-      // Se não encontrou o inscrito
-      if (!checkData) {
+      // Se não encontrou resultados
+      if (!checkDataArray || checkDataArray.length === 0) {
         setLastCheckInResult({
           success: false,
           message: "Não foi possível encontrar uma inscrição com este QR Code."
@@ -233,6 +232,9 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
         return;
       }
       
+      // Usa o primeiro resultado encontrado
+      const checkData = checkDataArray[0];
+      
       // Verifica se já fez check-in anteriormente
       if (checkData.check_in) {
         setLastCheckInResult({
@@ -244,10 +246,10 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
         toast({
           title: "Check-in já realizado",
           description: `${checkData.nome_completo} já realizou o check-in anteriormente.`,
-          duration: 3000,
+          duration: 6000,
         });
         
-        // Aguarda 2 segundos e reinicia o scanner em vez de fechar o modal
+        // Aguarda 6 segundos e reinicia o scanner em vez de fechar o modal
         setTimeout(() => {
           setLastCheckInResult(null);
           startScanner();
@@ -270,21 +272,21 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
         // Armazena o resultado do check-in para exibição
         setLastCheckInResult({
           success: true,
-          message: `Check-in realizado com sucesso!`,
+          message: "Check-in realizado com sucesso!",
           nome: data[0].nome_completo
         });
         
         toast({
           title: "Check-in realizado com sucesso!",
           description: `Check-in de ${data[0].nome_completo} confirmado.`,
-          duration: 4000,
+          duration: 6000,
         });
         
-        // Aguarda 2 segundos e reinicia o scanner em vez de fechar o modal
+        // Aguarda 6 segundos e reinicia o scanner em vez de fechar o modal
         setTimeout(() => {
           setLastCheckInResult(null);
           startScanner();
-        }, 2000);
+        }, 6000);
       } else {
         setLastCheckInResult({
           success: false,
