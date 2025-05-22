@@ -257,6 +257,7 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
         return;
       }
       
+      
       // Se não fez check-in, atualiza o banco de dados
       const { data, error } = await supabase
         .from("inscricoes_evento_cps")
