@@ -18,7 +18,7 @@ import {
 import { Button } from "../components/ui/button";
 import { useToast } from "../components/ui/use-toast";
 import { supabase } from "../lib/supabaseClient";
-import { UsersIcon, CheckCircleIcon, XCircleIcon, ClockIcon, PencilIcon, PlusIcon, QrCodeIcon, RefreshCwIcon, CheckIcon, AlertCircleIcon, DownloadIcon } from 'lucide-react';
+import { UsersIcon, CheckCircleIcon, XCircleIcon, ClockIcon, PencilIcon, PlusIcon, QrCodeIcon, RefreshCwIcon, CheckIcon, AlertCircleIcon, DownloadIcon, ChevronDownIcon } from 'lucide-react';
 import { Input } from "../components/ui/input";
 import {
   Dialog,
@@ -27,8 +27,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu";
 import { unidadesList } from "@/data/locations";
 import { QRCodeScanner } from "../components/QRCodeScanner";
+import * as XLSX from 'xlsx';
 
 import { Inscricao, StatusInscricao } from "@/types/supabase";
 
@@ -373,6 +380,72 @@ export default function Admin() {
     }
   };
 
+  // Função para exportar os dados para XLSX (Excel)
+  const exportToXLSX = () => {
+    try {
+      // Cria uma cópia dos dados filtrados para ordenação
+      const sortedGuests = [...filteredGuests].sort((a, b) => {
+        // Ordenação alfabética por nome
+        const nameA = (a.nome_completo || "").toLowerCase();
+        const nameB = (b.nome_completo || "").toLowerCase();
+        return nameA.localeCompare(nameB, 'pt-BR');
+      });
+      
+      // Formata os dados para Excel
+      const xlsxData = sortedGuests.map(guest => ({
+        "Nome Completo": guest.nome_completo || "",
+        "Email": guest.email || "",
+        "Telefone": guest.telefone || "",
+        "Tipo de Unidade": guest.tipo_unidade || "",
+        "Nome da Unidade": guest.nome_unidade || "",
+        "Cargo": guest.cargo || "",
+        "Status": guest.status_inscricao || "pendente",
+        "Check-in": guest.check_in ? "Sim" : "Não",
+        "Data de Inscrição": guest.created_at ? new Date(guest.created_at).toLocaleString('pt-BR') : ""
+      }));
+      
+      // Cria uma planilha com os dados
+      const worksheet = XLSX.utils.json_to_sheet(xlsxData);
+      
+      // Ajusta a largura das colunas para melhor visualização
+      const wscols = [
+        { wch: 25 }, // Nome Completo
+        { wch: 25 }, // Email
+        { wch: 15 }, // Telefone
+        { wch: 15 }, // Tipo de Unidade
+        { wch: 25 }, // Nome da Unidade
+        { wch: 20 }, // Cargo
+        { wch: 12 }, // Status
+        { wch: 10 }, // Check-in
+        { wch: 20 }  // Data de Inscrição
+      ];
+      worksheet['!cols'] = wscols;
+      
+      // Cria um livro de trabalho e adiciona a planilha
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Inscritos");
+      
+      // Define o nome do arquivo com data atual
+      const date = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+      const fileName = `inscritos-evento-cps-${date}.xlsx`;
+      
+      // Gera o arquivo XLSX e inicia o download
+      XLSX.writeFile(workbook, fileName);
+      
+      toast({
+        title: "Download iniciado",
+        description: "O arquivo Excel com os dados dos inscritos está sendo baixado.",
+        duration: 3000,
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao exportar dados",
+        description: error.message,
+      });
+    }
+  };
+
   if (loading) {
     return <div className="p-8 text-center">Carregando...</div>;
   }
@@ -614,21 +687,33 @@ export default function Admin() {
                 </Button>
               </div>
               
-              {/* Botão para exportar dados para CSV */}
+              {/* Menu Dropdown para Exportação */}
               <div 
                 className="inline-block" 
                 onClick={(e) => e.stopPropagation()}
               >
-                <Button
-                  type="button"
-                  variant="default"
-                  onClick={exportToCSV}
-                  className="bg-cps-wine hover:bg-cps-wine/90 w-auto"
-                  size="sm"
-                >
-                  <DownloadIcon className="mr-1 h-4 w-4" />
-                  <span className="whitespace-nowrap text-sm">Exportar CSV</span>
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="default"
+                      className="bg-cps-wine hover:bg-cps-wine/90 w-auto"
+                      size="sm"
+                    >
+                      <DownloadIcon className="mr-1 h-4 w-4" />
+                      <span className="whitespace-nowrap text-sm">Exportar</span>
+                      <ChevronDownIcon className="ml-1 h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={exportToCSV} className="cursor-pointer">
+                      Exportar CSV
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={exportToXLSX} className="cursor-pointer">
+                      Exportar Excel
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
               
               <Button 
