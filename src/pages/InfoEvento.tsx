@@ -263,6 +263,51 @@ const EstabelecimentoCard: React.FC<EstabelecimentoProps> = ({
   );
 };
 
+// Importar os estilos de animação do EventDetails para reutilização
+const animationStyles = `
+  @keyframes gradient-x {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  @keyframes float {
+    0% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(-10px) translateX(5px); }
+    100% { transform: translateY(0) translateX(0); }
+  }
+  @keyframes float-slow {
+    0% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(-15px) translateX(10px); }
+    100% { transform: translateY(0) translateX(0); }
+  }
+  @keyframes float-slower {
+    0% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(15px) translateX(-10px); }
+    100% { transform: translateY(0) translateX(0); }
+  }
+  @keyframes float-reverse {
+    0% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(10px) translateX(-5px); }
+    100% { transform: translateY(0) translateX(0); }
+  }
+  .animate-gradient-x {
+    background-size: 200% 200%;
+    animation: gradient-x 8s ease infinite;
+  }
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  .animate-float-slow {
+    animation: float-slow 4s ease-in-out infinite;
+  }
+  .animate-float-slower {
+    animation: float-slower 5s ease-in-out infinite;
+  }
+  .animate-float-reverse {
+    animation: float-reverse 3.5s ease-in-out infinite;
+  }
+`;
+
 const InfoEvento: React.FC = () => {
   const navigate = useNavigate();
 
@@ -273,6 +318,8 @@ const InfoEvento: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Injetar estilos de animação */}
+      <style dangerouslySetInnerHTML={{ __html: animationStyles }} />
       <Header />
       
       <main className="flex-grow">
@@ -385,24 +432,33 @@ const InfoEvento: React.FC = () => {
             
             {/* Seção Reconheça São Paulo */}
             <div id="agencia-reconheca" className="mb-12 scroll-mt-16">
-              <div className="bg-cps-wine p-4 rounded-lg mb-6 text-white">
-                <h3 className="text-xl font-bold flex items-center justify-center">
-                  <Map className="h-5 w-5 mr-2" />
-                  Explore mais sobre São Paulo
-                </h3>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden border-t-4 border-cps-wine">
-                <div className="md:flex">
-                  <div className="md:w-1/2 p-6 md:p-8 flex flex-col justify-between">
-                    <div className="text-center">
-                      <div className="mb-5">
-                        <h4 className="text-2xl md:text-3xl font-bold text-cps-wine inline-flex flex-col items-center">
-                          <span className="relative z-10 px-2">Reconheça São Paulo</span>
-                          <span className="h-2 bg-cps-wine/20 rounded-full w-full mt-1"></span>
-                        </h4>
-                        <p className="text-cps-blue-dark font-medium mt-3 italic">Conectando pessoas, histórias e experiências</p>
-                      </div>
+              <div className="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden">
+                <div className="relative overflow-hidden text-white p-5 md:p-6">
+                  {/* Fundo com gradiente animado */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-cps-blue-dark via-cps-blue to-cps-wine animate-gradient-x"></div>
+                  
+                  {/* Elementos decorativos animados */}
+                  <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute w-40 h-40 bg-white/10 rounded-full -top-10 -right-10 animate-float-slow"></div>
+                    <div className="absolute w-32 h-32 bg-white/5 rounded-full -bottom-10 -left-10 animate-float-slower"></div>
+                    <div className="absolute w-24 h-24 bg-cps-blue-light/20 rounded-full top-1/4 right-1/4 animate-float"></div>
+                    <div className="absolute w-16 h-16 bg-cps-wine/20 rounded-full bottom-1/3 left-1/3 animate-float-reverse"></div>
+                  </div>
+                  
+                  <div className="flex flex-col md:flex-row items-center justify-center relative z-10 gap-3">
+                    <div className="flex items-center">
+                      <h2 className="text-xl md:text-2xl font-bold">Reconheça São Paulo</h2>
+                    </div>
+                    <div className="bg-gradient-to-r from-cps-blue-light/30 to-cps-wine/30 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-medium border border-white/20 shadow-inner">
+                      Conectando pessoas, histórias e experiências
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-6">
+                  <div className="md:flex">
+                    <div className="md:w-1/2 flex flex-col justify-between">
+                      <div className="text-center">
                       <p className="text-gray-700 mb-4 mx-auto max-w-md">
                         Aproveite sua estadia em São Paulo para descobrir os melhores atrativos turísticos, exposições, 
                         eventos culturais e experiências gastronômicas que a cidade tem a oferecer.
@@ -529,6 +585,7 @@ const InfoEvento: React.FC = () => {
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </section>
       </main>
