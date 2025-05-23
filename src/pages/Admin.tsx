@@ -18,7 +18,7 @@ import {
 import { Button } from "../components/ui/button";
 import { useToast } from "../components/ui/use-toast";
 import { supabase } from "../lib/supabaseClient";
-import { UsersIcon, CheckCircleIcon, XCircleIcon, ClockIcon, PencilIcon, PlusIcon, QrCodeIcon, RefreshCwIcon, CheckIcon, AlertCircleIcon, DownloadIcon, ChevronDownIcon } from 'lucide-react';
+import { UsersIcon, CheckCircleIcon, XCircleIcon, ClockIcon, PencilIcon, PlusIcon, QrCodeIcon, RefreshCwIcon, CheckIcon, AlertCircleIcon, DownloadIcon, ChevronDownIcon, SendIcon } from 'lucide-react';
 import { Input } from "../components/ui/input";
 import {
   Dialog,
@@ -228,6 +228,33 @@ export default function Admin() {
     });
   }
 };
+
+  const handleResendQRCode = async (id: string) => {
+    try {
+      //  faz o update para true
+      const { data, error } = await supabase
+        .from('inscricoes_evento_cps')
+        .update({ reenviar_qrcode: true })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: 'QR Code será reenviado',
+        description: 'O QR Code será reenviado em breve para o WhatsApp do inscrito.',
+      });
+
+      // Atualiza a lista de inscritos
+      await fetchGuests();
+    } catch (error) {
+      console.error('Erro ao solicitar reenvio do QR Code:', error);
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível solicitar o reenvio do QR Code.',
+        variant: 'destructive',
+      });
+    }
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -740,8 +767,8 @@ export default function Admin() {
                   <TableHead className="w-[12%]">Cargo</TableHead>
                   <TableHead className="w-[10%]">Status</TableHead>
                   <TableHead className="w-[10%]">Check-in</TableHead>
-                  <TableHead className="w-[15%]">Data de Inscrição</TableHead>
-                  <TableHead className="w-[15%] sticky right-0 bg-white">Ações</TableHead>
+                  <TableHead className="w-[160px] whitespace-normal break-words">Data Inscrição</TableHead>
+                  <TableHead className="w-[120px] sticky right-0 bg-white">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -804,17 +831,31 @@ export default function Admin() {
                         </span>
                       )}
                     </TableCell>
-                    <TableCell className="break-words">
-                      {guest.created_at ? new Date(guest.created_at).toLocaleDateString() : '-'}
+                    <TableCell className="break-words whitespace-normal w-[160px]">
+                      {guest.created_at ? (
+                        <>
+                          {new Date(guest.created_at).toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: '2-digit'
+                          })}
+                          <br />
+                          {new Date(guest.created_at).toLocaleTimeString('pt-BR', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false
+                          })}
+                        </>
+                      ) : '-'}
                     </TableCell>
                     <TableCell className="sticky right-0 bg-white">
-                      <div className="flex items-center gap-1 whitespace-nowrap">
+                      <div className="flex items-center gap-[2px] whitespace-nowrap">
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => updateGuestStatus(guest.id, "aprovado")}
                           disabled={guest.status_inscricao === "aprovado"}
-                          className="border-green-500 text-green-600 hover:bg-green-50 px-1 py-1 h-auto text-xs"
+                          className="border-green-500 text-green-600 hover:bg-green-50 px-[2px] h-6 text-[11px] min-w-[42px]"
                         >
                           Aceitar
                         </Button>
@@ -823,7 +864,7 @@ export default function Admin() {
                           variant="outline"
                           onClick={() => updateGuestStatus(guest.id, "rejeitado")}
                           disabled={guest.status_inscricao === "rejeitado"}
-                          className="border-red-500 text-red-600 hover:bg-red-50 px-1 py-1 h-auto text-xs"
+                          className="border-red-500 text-red-600 hover:bg-red-50 px-[2px] h-6 text-[11px] min-w-[42px]"
                         >
                           Rejeitar
                         </Button>
@@ -835,10 +876,20 @@ export default function Admin() {
                             setFormData(guest);
                             setIsModalOpen(true);
                           }}
-                          className="border-gray-500 text-gray-600 hover:bg-gray-50 px-1 py-1 h-auto"
+                          className="border-gray-500 text-gray-600 hover:bg-gray-50 w-6 h-6 p-0"
                         >
                           <PencilIcon className="h-3 w-3" />
                         </Button>
+                        {isAuthorized && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleResendQRCode(guest.id)}
+                            className="border-purple-500 text-purple-600 hover:bg-purple-50 w-6 h-6 p-0"
+                          >
+                            <QrCodeIcon className="h-3 w-3" />
+                          </Button>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>

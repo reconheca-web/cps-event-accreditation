@@ -243,17 +243,12 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
           nome: checkData.nome_completo
         });
         
-        toast({
-          title: "Check-in já realizado",
-          description: `${checkData.nome_completo} já realizou o check-in anteriormente.`,
-          duration: 6000,
-        });
-        
-        // Aguarda 6 segundos e reinicia o scanner em vez de fechar o modal
+
+        // Aguarda 5 segundos e reinicia o scanner em vez de fechar o modal
         setTimeout(() => {
           setLastCheckInResult(null);
           startScanner();
-        }, 6000);
+        }, 5000);
         return;
       }
       
@@ -355,15 +350,15 @@ export function QRCodeScanner({ onClose }: QRCodeScannerProps) {
       {/* Container do scanner com bordas e estilo visual alinhado com o site */}
       <div className="w-full flex flex-col items-center">
         {lastCheckInResult ? (
-          <div className={`w-full max-w-md h-64 border-2 ${lastCheckInResult.success ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'} rounded-md overflow-hidden shadow-md flex flex-col items-center justify-center p-6 text-center`}>
+          <div className={`w-full max-w-md h-64 border-2 ${lastCheckInResult.success ? (lastCheckInResult.message.includes('anteriormente') ? 'border-orange-400 bg-orange-50' : 'border-green-500 bg-green-50') : 'border-red-500 bg-red-50'} rounded-md overflow-hidden shadow-md flex flex-col items-center justify-center p-6 text-center`}>
             {lastCheckInResult.success ? (
               <>
-                <CheckCircleIcon className="w-16 h-16 text-green-500 mb-4" />
-                <h3 className="text-xl font-bold text-green-700">{lastCheckInResult.message}</h3>
+                <CheckCircleIcon className={`w-16 h-16 ${lastCheckInResult.message.includes('anteriormente') ? 'text-orange-400' : 'text-green-500'} mb-4`} />
+                <h3 className={`text-xl font-bold ${lastCheckInResult.message.includes('anteriormente') ? 'text-orange-700' : 'text-green-700'}`}>{lastCheckInResult.message}</h3>
                 {lastCheckInResult.nome && (
-                  <p className="text-green-600 mt-2 text-lg">{lastCheckInResult.nome}</p>
+                  <p className={`mt-2 text-lg ${lastCheckInResult.message.includes('anteriormente') ? 'text-orange-600' : 'text-green-600'}`}>{lastCheckInResult.nome}</p>
                 )}
-                <p className="text-sm text-green-600 mt-4">Preparando para novo check-in...</p>
+                <p className={`text-sm mt-4 ${lastCheckInResult.message.includes('anteriormente') ? 'text-orange-600' : 'text-green-600'}`}>Preparando para novo check-in...</p>
               </>
             ) : (
               <>
