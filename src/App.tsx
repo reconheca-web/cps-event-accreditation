@@ -12,6 +12,7 @@ import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import InfoEvento from "./pages/InfoEvento";
 import ScannerPage from "./pages/ScannerPage";
+import { Dashboard } from "./pages/Dashboard";
 import { queryClient } from "@/lib/queryClient";
 
 const App = () => (
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/admin" element={<Admin />} />
           <Route path="/scanner" element={<ScannerPage />} />
           <Route path="/info-evento" element={<InfoEvento />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
