@@ -32,6 +32,12 @@ const Footer: React.FC = () => {
         
         <div className="mt-8 pt-4 border-t border-gray-600 text-center text-sm">
           <p>© {new Date().getFullYear()} Centro Paula Souza. Todos os direitos reservados.</p>
+          <p className="mt-2 text-gray-400">
+            Desenvolvido por{' '}
+            <a href="https://agenciareconheca.com.br" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors underline">
+              Agência Reconheça
+            </a>
+          </p>
         </div>
       </div>
     </footer>;
