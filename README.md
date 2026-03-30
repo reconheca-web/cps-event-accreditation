@@ -1,73 +1,178 @@
-# Welcome to your Lovable project
+# CPS Event Accreditation
 
-## Project info
+**Sistema de Credenciamento de Eventos — Centro Paula Souza**
 
-**URL**: https://lovable.dev/projects/53c27693-167f-4cc6-a3fd-709c075072da
+Plataforma web progressiva (PWA) para gerenciamento completo do credenciamento de participantes em eventos institucionais do Centro Paula Souza. Desenvolvido para o **Encontro de Gestores CPS 2025**.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## Visão Geral
 
-**Use Lovable**
+O sistema cobre todo o ciclo de credenciamento de um evento presencial:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/53c27693-167f-4cc6-a3fd-709c075072da) and start prompting.
+1. **Inscrição pública** — formulário de cadastro com validação em tempo real, seleção de unidade (ETEC/FATEC) e aceite de termos.
+2. **Painel administrativo** — aprovação/rejeição de inscrições, busca, filtros por status, edição inline e reenvio de QR Code via WhatsApp.
+3. **Check-in por QR Code** — leitura de QR Code pela câmera do dispositivo para registro de presença no local do evento.
+4. **Dashboard de acompanhamento** — indicadores em tempo real: total de inscritos, aprovados, rejeitados e check-ins realizados.
+5. **Informações do evento** — página pública com detalhes do evento, localização, estacionamento, restaurantes, farmácias e shoppings próximos com links para Google Maps e Waze.
+6. **Exportação de dados** — download de relatórios em CSV e Excel (XLSX).
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## Tecnologias
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+| Camada | Tecnologia |
+|---|---|
+| **Framework** | React 18 + TypeScript |
+| **Build** | Vite 5 (SWC) |
+| **Estilização** | Tailwind CSS 3 + shadcn/ui (Radix UI) |
+| **Estado & Cache** | TanStack React Query |
+| **Formulários** | React Hook Form + Zod |
+| **Backend** | Supabase (PostgreSQL + Auth + REST API) |
+| **QR Code** | html5-qrcode |
+| **Planilhas** | SheetJS (xlsx) |
+| **Gráficos** | Recharts |
+| **PWA** | vite-plugin-pwa (offline-first, instalável) |
+| **Roteamento** | React Router DOM v6 |
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## Estrutura do Projeto
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+```
+src/
+├── components/         # Componentes reutilizáveis (Header, Footer, QRCodeScanner, RegisterForm...)
+│   └── ui/             # Componentes base shadcn/ui
+├── data/               # Dados estáticos (listas de unidades ETEC/FATEC)
+├── hooks/              # Custom hooks (useMutations, use-mobile, use-toast)
+├── lib/                # Clientes e configurações (Supabase, React Query, PWA)
+├── pages/              # Páginas da aplicação
+│   ├── Index.tsx       # Landing page + formulário de inscrição
+│   ├── Login.tsx       # Autenticação administrativa
+│   ├── Admin.tsx       # Painel de gestão de inscrições
+│   ├── ScannerPage.tsx # Leitor de QR Code para check-in
+│   ├── Dashboard.tsx   # Dashboard de acompanhamento
+│   └── InfoEvento.tsx  # Informações úteis do evento
+├── types/              # Tipagens TypeScript (Supabase, inscrições)
+├── utils/              # Utilitários de validação
+└── App.tsx             # Rotas e layout principal
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+---
 
-# Step 3: Install the necessary dependencies.
-npm i
+## Pré-requisitos
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+- **Node.js** 18+ e **npm** 9+
+- Conta no **Supabase** com o projeto configurado
+
+---
+
+## Configuração
+
+1. **Clone o repositório**
+
+```bash
+git clone https://github.com/sua-org/cps-event-accreditation.git
+cd cps-event-accreditation
+```
+
+2. **Instale as dependências**
+
+```bash
+npm install
+```
+
+3. **Configure as variáveis de ambiente**
+
+Crie um arquivo `.env` na raiz do projeto a partir do exemplo:
+
+```bash
+cp .env.example .env
+```
+
+Preencha com as credenciais do seu projeto Supabase:
+
+```
+VITE_SUPABASE_URL=https://seu-projeto.supabase.co
+VITE_SUPABASE_ANON_KEY=sua-anon-key
+```
+
+4. **Inicie o servidor de desenvolvimento**
+
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+A aplicação estará disponível em `http://localhost:5173`.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## Scripts Disponíveis
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+| Comando | Descrição |
+|---|---|
+| `npm run dev` | Inicia o servidor de desenvolvimento |
+| `npm run build` | Gera o build de produção |
+| `npm run build:dev` | Gera o build em modo desenvolvimento |
+| `npm run preview` | Pré-visualiza o build de produção |
+| `npm run lint` | Executa o linter (ESLint) |
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+## Rotas da Aplicação
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+| Rota | Acesso | Descrição |
+|---|---|---|
+| `/` | Público | Landing page com formulário de inscrição |
+| `/info-evento` | Público | Informações do evento e arredores |
+| `/login` | Público | Login administrativo |
+| `/admin` | Autenticado | Gestão de inscrições e exportações |
+| `/scanner` | Autenticado | Leitor de QR Code para check-in |
+| `/dashboard` | Público | Dashboard de acompanhamento em tempo real |
 
-## How can I deploy this project?
+---
 
-Simply open [Lovable](https://lovable.dev/projects/53c27693-167f-4cc6-a3fd-709c075072da) and click on Share -> Publish.
+## Banco de Dados
 
-## Can I connect a custom domain to my Lovable project?
+O sistema utiliza o **Supabase** como backend, com a tabela principal `inscricoes_evento_cps` contendo:
 
-Yes, you can!
+- Dados pessoais (nome, e-mail, telefone)
+- Vínculo institucional (tipo e nome da unidade, cargo)
+- Controle de fluxo (status da inscrição, check-in, envio de QR Code)
+- Flags administrativas (bloqueio por IA, reenvio de QR Code)
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+A autenticação administrativa é feita via **Supabase Auth** (e-mail e senha).
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+---
+
+## PWA (Progressive Web App)
+
+A aplicação é instalável em dispositivos móveis e desktops, com suporte a:
+
+- Cache de assets e fontes para uso offline
+- Página de fallback offline (`offline.html`)
+- Atualização automática com notificação ao usuário
+
+---
+
+## Deploy
+
+O build de produção gera arquivos estáticos otimizados na pasta `dist/`, compatíveis com qualquer serviço de hospedagem (Vercel, Netlify, Cloudflare Pages, etc.):
+
+```bash
+npm run build
+```
+
+---
+
+## Licença
+
+Este projeto é proprietário e de uso restrito. Todos os direitos reservados.
+
+---
+
+<p align="center">
+  Desenvolvido com dedicação por <strong>Agência Reconheça</strong><br>
+  CNPJ: 13.520.672/0001-70<br><br>
+  <a href="https://reconheca.com.br">reconheca.com.br</a>
+</p>
