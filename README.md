@@ -2,6 +2,8 @@
 
 **Sistema de Credenciamento de Eventos — Centro Paula Souza**
 
+> **Propriedade:** Agência Reconheça — web.sys@agenciareconheca.com.br
+
 Plataforma web progressiva (PWA) para gerenciamento completo do credenciamento de participantes em eventos institucionais do Centro Paula Souza. Desenvolvido para o **Encontro de Gestores CPS 2025**.
 
 ---
@@ -173,6 +175,7 @@ Este projeto é proprietário e de uso restrito. Todos os direitos reservados.
 
 <p align="center">
   Desenvolvido com dedicação por <strong>Agência Reconheça</strong><br>
-  CNPJ: 13.520.672/0001-70<br><br>
-  <a href="https://reconheca.com.br">reconheca.com.br</a>
+  CNPJ: 13.520.672/0001-70<br>
+  web.sys@agenciareconheca.com.br<br><br>
+  <a href="https://www.reconhecasaopaulo.com.br/">reconhecasaopaulo.com.br</a>
 </p>
